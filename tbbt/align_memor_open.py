@@ -36,41 +36,41 @@ with open('memor/data.json') as f:
 1.Get utterances from a certain episode using episode_key
 2.Split utterances into segments using puncutation: , . ?
 """
-def get_segments_old(episode_key, all_data):
-    # Gather utteranes the defined episode
-    episode = []
-    for x in all_data:
-        if x.strip().split('_')[0]==episode_key:
-            episode.extend(data[x]['sentences'])
-
-    # Split utterances into segments
-    temp = []
-    for x in episode:
-        temp.extend(x.strip().split('.'))
-    episode = temp
-
-    temp = []
-    for x in episode:
-        temp.extend(x.strip().split(','))
-    episode = temp
-
-    temp = []
-    for x in episode:
-        temp.extend(x.strip().split('?'))
-    episode = temp
-
-    temp = []
-    for x in episode:
-        temp.extend(x.strip().split('!'))
-    episode = temp
-
-    temp = []
-    for x in episode:
-        if len(x.strip().split(' ')) > 5:
-            temp.append(x)
-    episode = temp
-
-    return episode
+# def get_segments_old(episode_key, all_data):
+#     # Gather utteranes the defined episode
+#     episode = []
+#     for x in all_data:
+#         if x.strip().split('_')[0]==episode_key:
+#             episode.extend(data[x]['sentences'])
+#
+#     # Split utterances into segments
+#     temp = []
+#     for x in episode:
+#         temp.extend(x.strip().split('.'))
+#     episode = temp
+#
+#     temp = []
+#     for x in episode:
+#         temp.extend(x.strip().split(','))
+#     episode = temp
+#
+#     temp = []
+#     for x in episode:
+#         temp.extend(x.strip().split('?'))
+#     episode = temp
+#
+#     temp = []
+#     for x in episode:
+#         temp.extend(x.strip().split('!'))
+#     episode = temp
+#
+#     temp = []
+#     for x in episode:
+#         if len(x.strip().split(' ')) > 5:
+#             temp.append(x)
+#     episode = temp
+#
+#     return episode
 
 
 def get_segments(episode_key, all_data):
@@ -80,7 +80,7 @@ def get_segments(episode_key, all_data):
     for x in all_data:
         if x.strip().split('_')[0]==episode_key:
             # Collect Segments
-            for utt in data[x]['sentences']:
+            for utt in all_data[x]['sentences']:
                 for item in re.split(pattern, utt):
                     tokens = item.strip().split(' ')
                     length = len(tokens)
@@ -96,15 +96,16 @@ for x in data:
 # print(len(episode_keys))
 
 episode_indexs = {}
-for item in tqdm(tuple(episode_keys)):
+for item in tqdm(tuple(episode_keys)[:20]):
     temp = []
     segments = get_segments(item, data)
     for segment in tqdm(segments):
+        print(segment)
         for i, subtitle in enumerate(en_subtitle):
             if segment in subtitle:
                 temp.append([i, segment, en_subtitle[i], zh_subtitle[i]])
     episode_indexs[item] = temp
-pkl.dump(episode_indexs, open('episode_indexs.pkl', 'wb'))
+pkl.dump(episode_indexs, open('episode_indexs_former_20.pkl', 'wb'))
 
 
 
