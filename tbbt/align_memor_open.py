@@ -96,7 +96,7 @@ for x in data:
 # print(len(episode_keys))
 
 episode_indexs = {}
-for item in tqdm(tuple(episode_keys)[:20]):
+for item in tqdm(tuple(episode_keys)[60:90]):
     temp = []
     segments = get_segments(item, data)
     for segment in tqdm(segments):
@@ -105,7 +105,7 @@ for item in tqdm(tuple(episode_keys)[:20]):
             if segment in subtitle:
                 temp.append([i, segment, en_subtitle[i], zh_subtitle[i]])
     episode_indexs[item] = temp
-pkl.dump(episode_indexs, open('episode_indexs_former_20.pkl', 'wb'))
+pkl.dump(episode_indexs, open('episode_indexs_60_90.pkl', 'wb'))
 
 
 
