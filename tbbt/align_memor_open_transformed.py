@@ -37,7 +37,7 @@ for x in data:
 
 
 episode_indexs = {}
-for item in tqdm(tuple(episode_keys)[:2]):
+for item in tqdm(tuple(episode_keys)):
     temp = []
     segments = get_segments(item, data)
 
@@ -47,7 +47,7 @@ for item in tqdm(tuple(episode_keys)[:2]):
                 temp.append([i, segment, en_subtitle[i], zh_subtitle[i]])
     episode_indexs[item] = temp
 
-pkl.dump(episode_indexs, open('episode_indexs_transformed_test.pkl', 'wb'))
+pkl.dump(episode_indexs, open('episode_indexs_transformed.pkl', 'wb'))
 
 
 
