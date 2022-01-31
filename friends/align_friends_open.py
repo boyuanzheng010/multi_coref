@@ -54,14 +54,14 @@ import jiwer
 # data = output
 
 def get_segments(episode_key, all_data):
-    print(episode_key)
+    # print(episode_key)
     # print(type(all_data))
     # Gather utteranes the defined episode
     segments = []
     for x in all_data:
         if x==episode_key:
-            print(x)
-            print(all_data[x])
+            # print(x)
+            # print(all_data[x])
             # print(all_data[x])
             # print(len(all_data[x]))
             # Collect Segments
@@ -72,7 +72,7 @@ def get_segments(episode_key, all_data):
                 num_iter = length // 6
                 for i in range(num_iter):
                     segments.append(" ".join(tokens[i * 6: i * 6 + 6]))
-                    print(" ".join(tokens[i * 6: i * 6 + 6]))
+                    # print(" ".join(tokens[i * 6: i * 6 + 6]))
     # print(segments)
     return segments
 
@@ -88,9 +88,9 @@ with open('friends_transformed.pkl', 'rb') as f:
     data = pkl.load(f)
 
 episode_keys = tuple(data.keys())
-print(episode_keys)
+# print(episode_keys)
 episode_indexs = {}
-for item in tqdm(episode_keys[:1]):
+for item in tqdm(episode_keys[193:]):
     # print(item)
     temp = []
     segments = get_segments(item, data)
@@ -100,7 +100,7 @@ for item in tqdm(episode_keys[:1]):
             if segment in subtitle:
                 temp.append([i, segment, en_subtitle[i], zh_subtitle[i]])
     episode_indexs[item] = temp
-pkl.dump(episode_indexs, open('episode_indexs_test.pkl', 'wb'))
+pkl.dump(episode_indexs, open('transformed_friends_193_236.pkl', 'wb'))
 
 
 
