@@ -47,4 +47,4 @@ for item in tqdm(tuple(episode_keys)):
                 temp.append([i, segment, en_subtitle[i], zh_subtitle[i]])
     episode_indexs[item] = temp
 
-pkl.dump(episode_indexs, open('alignment_results/indexs_tbbt.pkl', 'wb'))
+pkl.dump(episode_indexs, open('alignment_results/indexs_tbbt_fa.pkl', 'wb'))
