@@ -84,7 +84,7 @@ with open('../open_subtitle/en_fa/fa_subtitles.pkl', 'rb') as f:
     zh_subtitle = pkl.load(f)
 
 # Load Friends Dataset
-with open('friends_transformed.pkl', 'rb') as f:
+with open('data/friends_transformed.pkl', 'rb') as f:
     data = pkl.load(f)
 
 episode_keys = tuple(data.keys())
