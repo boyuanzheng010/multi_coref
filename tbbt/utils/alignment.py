@@ -106,6 +106,16 @@ def turn_sub2epi_into_epi2sub(sub2epi):
     return epi2sub
 
 
+def reverse_key_value(sub2epi):
+    epi2sub = {}
+    for sub_id in sub2epi:
+        for epi_id in sub2epi[sub_id]:
+            if epi_id not in epi2sub:
+                epi2sub[epi_id] = [sub_id]
+            else:
+                epi2sub[epi_id].append(sub_id)
+    return epi2sub
+
 """
 Using exact match to locate each exact match pair of short sentence
 Then, filter through this alignment

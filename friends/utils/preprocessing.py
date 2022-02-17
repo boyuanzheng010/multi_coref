@@ -106,14 +106,19 @@ def calculate_gaps(idx_list):
         gaps.append(idx_list[i + 1] - idx_list[i])
     return gaps
 
-
+def calculate_gaps_and_idxs(idx_list):
+    gaps = []
+    idx_list.sort()
+    for i in range(len(idx_list) - 1):
+        gaps.append(idx_list[i + 1] - idx_list[i])
+    return gaps
 
 """
 Fetch subset of open subtitle and episode utterance: Season 1, Episode 1
 
 Example: 
 (en_subset, zh_subset, tbbt_episode) = fetch_subsets(
-    episode=tbbt,
+    episode=tbbt_old,
     en_subtitle=en_subtitle,
     zh_subtitle=zh_subtitle,
     results=results,
