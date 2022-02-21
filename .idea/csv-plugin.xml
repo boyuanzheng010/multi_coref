@@ -45,6 +45,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/annotation_inferace/active-learning-hit/day2/session1/emcgraw1/results.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/annotation_inferace/active-learning-hit/day2/session1/emcgraw1/unlabeled_data.csv">
           <value>
             <Attribute>
@@ -53,6 +60,13 @@
           </value>
         </entry>
         <entry key="/annotation_inferace/active-learning-hit/day2/session1/lfondre1/unlabeled_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/annotation_inferace/active-learning-hit/day2/session1/nsvanid1/results.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

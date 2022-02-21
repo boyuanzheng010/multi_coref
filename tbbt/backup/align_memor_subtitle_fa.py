@@ -7,13 +7,13 @@ import re
 
 
 # Load Open Subtitle
-with open('../open_subtitle/en_fa/en_subtitles_transformed.pkl', 'rb') as f:
+with open('../../open_subtitle/en_fa/en_subtitles_transformed.pkl', 'rb') as f:
     en_subtitle = pkl.load(f)
-with open('../open_subtitle/en_fa/fa_subtitles.pkl', 'rb') as f:
+with open('../../open_subtitle/en_fa/fa_subtitles.pkl', 'rb') as f:
     zh_subtitle = pkl.load(f)
 
 # Load MEMOR Dataset
-with open('memor/data_transformed.pkl', 'rb') as f:
+with open('../memor/data_transformed.pkl', 'rb') as f:
     data = pkl.load(f)
 
 
@@ -47,4 +47,4 @@ for item in tqdm(tuple(episode_keys)):
                 temp.append([i, segment, en_subtitle[i], zh_subtitle[i]])
     episode_indexs[item] = temp
 
-pkl.dump(episode_indexs, open('alignment_results/indexs_tbbt_fa.pkl', 'wb'))
+pkl.dump(episode_indexs, open('../alignment_results/indexs_tbbt_fa.pkl', 'wb'))

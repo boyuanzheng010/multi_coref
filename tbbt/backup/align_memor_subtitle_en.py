@@ -13,7 +13,7 @@ with open('zh_subtitles.pkl', 'rb') as f:
     zh_subtitle = pkl.load(f)
 
 # Load MEMOR Dataset
-with open('memor/data_transformed.pkl', 'rb') as f:
+with open('../memor/data_transformed.pkl', 'rb') as f:
     data = pkl.load(f)
 
 
