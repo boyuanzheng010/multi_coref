@@ -240,5 +240,9 @@ def fetch_subsets(episode, en_subtitle, zh_subtitle, results, season_id, episode
 
 
 
+def get_substrings(string):
+
+    pass
+
 
 
