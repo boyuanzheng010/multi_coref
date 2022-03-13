@@ -171,6 +171,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/tbbt/parallel_corpus/test_all_spans.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/tbbt/parallel_corpus/test_berkeley.csv">
           <value>
             <Attribute>
