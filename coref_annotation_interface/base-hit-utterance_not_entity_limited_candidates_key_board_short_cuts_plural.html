@@ -184,13 +184,13 @@
                 function(span) { return span.sentenceIndex * maxLength * maxLength +
                                         span.startToken * maxLength +
                                         span.endToken; });
-            
+
             this.attributes.clickSpans = _.sortBy(
                 this.attributes.clickSpans,
                 function(span) { return span.sentenceIndex * maxLength * maxLength +
                                         span.startToken * maxLength +
                                         span.endToken; });
-            
+
         },
         // clearAnswerSpan: function(answerIndex) {
         //     this.attributes.answerSpans[answerIndex].sentenceIndex = -1;
@@ -258,7 +258,7 @@
         },
         isPartOfAnyAnswerSpan: function(answerIndex, si, ti) {
             var answerSpanLength = this.attributes.answerSpans[answerIndex].span_list.length;
-            for (var i = 0; i < answerSpanLength-1; i++) {
+            for (var i = 0; i < answerSpanLength; i++) {
                 if (spanContainsToken(this.attributes.answerSpans[answerIndex].span_list[i], si, ti)) {
                     return true;
                 }
@@ -310,7 +310,7 @@
         // answerSpanIsPreceding: function(answerSpan) {
         //     return spanPrecedes(answerSpan, answerSpan.querySpan);
         // },
-        
+
         // Currently, use the first element in span_list
         answerSpanIsPreceding: function(answerSpan) {
             var answerSpanIndex = answerSpan.currentAnswerIndex;
@@ -351,7 +351,7 @@
         //         this.attributes.answerSpans,
         //         function(span) { return span.status !== AnswerSpanStatus.OK });
         // },
-        
+
         // For this version: use the span_list[-1]
         validateAnswerSpans: function() {
             for (var answerSpan of this.attributes.answerSpans) {
@@ -623,6 +623,17 @@
                 }
             }
 
+            this.$el.append($('<h5>').text('Plural entities:'));
+            this.$el.append($('<button>')
+                .addClass('btn text-start next_answer next_answer_button')
+                .addClass(nextAnswerClass)
+                .attr('type', 'button')
+                .data('start_token', -2)
+                .data('end_token', -2)
+                .data('index', -1)
+                .text(nextAnswerButtonText));
+
+            this.$el.append($('<h5>').text('No answer reason:'));
             this.$el.append($('<button>')
                 .addClass('btn text-start clickable answer_not_present_button')
                 .addClass(notPresentClass)
@@ -642,17 +653,7 @@
                 .data('end_token', -2)
                 .data('index', -1)
                 .text(notMentionButtonText));
-            
-            this.$el.append($('<h5>').text('Plural Operations'));
-            this.$el.append($('<button>')
-                .addClass('btn text-start next_answer next_answer_button')
-                .addClass(nextAnswerClass)
-                .attr('type', 'button')
-                .data('start_token', -2)
-                .data('end_token', -2)
-                .data('index', -1)
-                .text(nextAnswerButtonText));   
-                    
+
             return this;
         }
     });
@@ -788,7 +789,7 @@
                         ' btn-success' :
                         ' btn-danger'))
                     .text(activeQuerySpanText))
-                
+
                                 // Add "Answer:" and the selected answer span
                                 .append($('<i>').addClass('me-2 mt-1').text('Answer:'))
                 .append($('<div>')
@@ -903,7 +904,6 @@
                             .data('sentence_index', si)
                             .data('token_index', ti)
                             .text(sentences[si][ti]);
-                        
                         // Try to use the last token in sentence as the active Query Element
                         if (this.model.isPartOfQuerySpan(activeQueryIndex, si, ti)) {
                             if (activeQueryElement === null) {
@@ -934,8 +934,8 @@
                     }
 
                     paragraph.append($('<p>'))
-                    
-                    
+
+
                 }
             }
             textDiv.append(paragraph);
@@ -1024,19 +1024,19 @@
     });
 
     const notPresentText = 'no previous mention';
-    const notPresentButtonText = '(n)o previous mention';
+    const notPresentButtonText = 'No previous mention';
     const notPresentClass = 'btn-outline-primary';
 
     const notMentionText = 'not Mention';
-    const notMentionButtonText = '(n)ot mention';
+    const notMentionButtonText = 'Not mention';
     const notMentionClass = 'btn-outline-primary';
 
     const previousAnswerText = 'Previous Answer';
-    const previousAnswerButtonText = '(P)revious Answer';
+    const previousAnswerButtonText = 'Previous Answer';
     const previousAnswerClass = 'btn-outline-primary';
 
-    const nextAnswerText = 'Next Answer';
-    const nextAnswerButtonText = '(N)ext Answer';
+    const nextAnswerText = 'Add span';
+    const nextAnswerButtonText = 'Add span';
     const nextAnswerClass = 'btn-outline-primary';
 
     const activeQuerySpanClass = 'btn-dark';
@@ -1184,7 +1184,7 @@
             <p>
                 We would ask you to click <span class="btn btn-outline-primary p-1">no previous mention</span> (which will be discussed next) as there is no previous mention of Penny's TV.
             </p>
-            
+
         </div>
 
         <div class="card card-body">
@@ -1391,8 +1391,12 @@
                             <td>Select "no previous mention"</td>
                         </tr>
                         <tr>
-                            <td><span class="btn btn-light p-1 border">p</span></td>
+                            <td><span class="btn btn-light p-1 border">m</span></td>
                             <td>Select "not mention"</td>
+                        </tr>
+                        <tr>
+                            <td><span class="btn btn-light p-1 border">d</span></td>
+                            <td>Select "add span"</td>
                         </tr>
                         <tr>
                             <td><span class="btn btn-light p-1 border">Tab</span></td>
@@ -1424,37 +1428,37 @@
                         </tr>
 
                         <tr>
-                            <td><span class="btn btn-light p-1 border">S</span></td>
+                            <td><span class="btn btn-light p-1 border">s</span></td>
                             <td>Sheldon</td>
                         </tr>
 
                         <tr>
-                            <td><span class="btn btn-light p-1 border">L</span></td>
+                            <td><span class="btn btn-light p-1 border">l</span></td>
                             <td>Leonard</td>
                         </tr>
 
                         <tr>
-                            <td><span class="btn btn-light p-1 border">P</span></td>
+                            <td><span class="btn btn-light p-1 border">p</span></td>
                             <td>Penny</td>
                         </tr>
 
                         <tr>
-                            <td><span class="btn btn-light p-1 border">R</span></td>
+                            <td><span class="btn btn-light p-1 border">r</span></td>
                             <td>Raj</td>
                         </tr>
 
                         <tr>
-                            <td><span class="btn btn-light p-1 border">H</span></td>
+                            <td><span class="btn btn-light p-1 border">h</span></td>
                             <td>Howard</td>
                         </tr>
 
                         <tr>
-                            <td><span class="btn btn-light p-1 border">A</span></td>
+                            <td><span class="btn btn-light p-1 border">a</span></td>
                             <td>Amy</td>
                         </tr>
 
                         <tr>
-                            <td><span class="btn btn-light p-1 border">B</span></td>
+                            <td><span class="btn btn-light p-1 border">b</span></td>
                             <td>Bernadette</td>
                         </tr>
 
