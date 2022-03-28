@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-
+import sys
 import argparse
 import csv
 import json
 from glob import glob
-
+csv.field_size_limit(sys.maxsize)
 
 DEFAULT_COLUMN_NAME = 'json_data'
 
