@@ -615,6 +615,45 @@
             this.model.trigger('change');
         },
 
+        selectNextAnswer: function(startToken, endToken) {
+            var activeQueryIndex = this.model.attributes.activeQueryIndex;
+            var lastAnswerIndex = this.model.attributes.answerSpans[activeQueryIndex].span_list.length - 1;
+            var lastAnswer = this.model.attributes.answerSpans[activeQueryIndex].span_list[lastAnswerIndex];
+
+            if ((lastAnswer.sentenceIndex==-1) && (lastAnswer.startToken==-1) && (lastAnswer.endToken==-1)) {
+                this.model.trigger('change');
+            } else {
+                // Create a new element in span_list
+                this.model.attributes.answerSpans[activeQueryIndex].span_list.push({sentenceIndex: -1,startToken: -1,endToken: -1});
+                // Increase the current Answer Index
+                this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex += 1;
+                this.model.trigger('change');
+            }
+        },
+        selectCancelAnswer: function() {
+            var activeQueryIndex = this.model.attributes.activeQueryIndex;
+
+            if (this.model.attributes.answerSpans[activeQueryIndex].span_list.length==1) {
+                // If length of span list == 1, make the list as initialization
+                this.model.attributes.answerSpans[activeQueryIndex].span_list = [{sentenceIndex: -1, startToken: -1, endToken: -1}];
+                this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex = 0;
+            } else {
+                // If length of span list >= 2, pop
+                var temp = this.model.attributes.answerSpans[activeQueryIndex].span_list;
+                var temp_pop = temp.pop();
+                var temp_answer_index = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
+                var currentAnswerIndex = temp_answer_index - 1;
+                console.log("Start Pop");
+                console.log(temp);
+                console.log(temp_answer_index);
+                this.model.attributes.answerSpans[activeQueryIndex].span_list = temp;
+                this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex = currentAnswerIndex;
+                console.log(this.model.attributes.answerSpans[activeQueryIndex].span_list);
+                console.log(this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex);
+            }
+            this.model.trigger('change');
+        },
+
         selectCharacter: function(characterShort) {
             var activeQueryIndex = this.model.attributes.activeQueryIndex;
             var answerSpanIndex = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
@@ -667,8 +706,6 @@
                 }
                 
             }
-
-
         },
 
         onClick: function(event) {
@@ -679,46 +716,56 @@
         nextAnswer: function(event) {
             var startToken = $(event.currentTarget).data('start_token');
             var endToken = $(event.currentTarget).data('end_token');
-            var activeQueryIndex = this.model.attributes.activeQueryIndex;
-
-            var lastAnswerIndex = this.model.attributes.answerSpans[activeQueryIndex].span_list.length - 1;
-            var lastAnswer = this.model.attributes.answerSpans[activeQueryIndex].span_list[lastAnswerIndex];
-
-            if ((lastAnswer.sentenceIndex==-1) && (lastAnswer.startToken==-1) && (lastAnswer.endToken==-1)) {
-                this.model.trigger('change');
-            } else {
-                // Create a new element in span_list
-                this.model.attributes.answerSpans[activeQueryIndex].span_list.push({sentenceIndex: -1,startToken: -1,endToken: -1});
-                // Increase the current Answer Index
-                this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex += 1;
-                this.model.trigger('change');
-            }
+            this.selectNextAnswer(startToken, endToken);
         },
         cancelAnswer: function(event) {
             var startToken = $(event.currentTarget).data('start_token');
             var endToken = $(event.currentTarget).data('end_token');
-            var activeQueryIndex = this.model.attributes.activeQueryIndex;
-
-            if (this.model.attributes.answerSpans[activeQueryIndex].span_list.length==1) {
-                // If length of span list == 1, make the list as initialization
-                this.model.attributes.answerSpans[activeQueryIndex].span_list = [{sentenceIndex: -1, startToken: -1, endToken: -1}];
-                this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex = 0;
-            } else {
-                // If length of span list >= 2, pop
-                var temp = this.model.attributes.answerSpans[activeQueryIndex].span_list;
-                var temp_pop = temp.pop();
-                var temp_answer_index = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
-                var currentAnswerIndex = temp_answer_index - 1;
-                console.log("Start Pop");
-                console.log(temp);
-                console.log(temp_answer_index);
-                this.model.attributes.answerSpans[activeQueryIndex].span_list = temp;
-                this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex = currentAnswerIndex;
-                console.log(this.model.attributes.answerSpans[activeQueryIndex].span_list);
-                console.log(this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex);
-            }
-            this.model.trigger('change');
+            this.selectCancelAnswer(startToken, endToken);
         },
+        // nextAnswer: function(event) {
+        //     var startToken = $(event.currentTarget).data('start_token');
+        //     var endToken = $(event.currentTarget).data('end_token');
+        //     var activeQueryIndex = this.model.attributes.activeQueryIndex;
+
+        //     var lastAnswerIndex = this.model.attributes.answerSpans[activeQueryIndex].span_list.length - 1;
+        //     var lastAnswer = this.model.attributes.answerSpans[activeQueryIndex].span_list[lastAnswerIndex];
+
+        //     if ((lastAnswer.sentenceIndex==-1) && (lastAnswer.startToken==-1) && (lastAnswer.endToken==-1)) {
+        //         this.model.trigger('change');
+        //     } else {
+        //         // Create a new element in span_list
+        //         this.model.attributes.answerSpans[activeQueryIndex].span_list.push({sentenceIndex: -1,startToken: -1,endToken: -1});
+        //         // Increase the current Answer Index
+        //         this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex += 1;
+        //         this.model.trigger('change');
+        //     }
+        // },
+        // cancelAnswer: function(event) {
+        //     var startToken = $(event.currentTarget).data('start_token');
+        //     var endToken = $(event.currentTarget).data('end_token');
+        //     var activeQueryIndex = this.model.attributes.activeQueryIndex;
+
+        //     if (this.model.attributes.answerSpans[activeQueryIndex].span_list.length==1) {
+        //         // If length of span list == 1, make the list as initialization
+        //         this.model.attributes.answerSpans[activeQueryIndex].span_list = [{sentenceIndex: -1, startToken: -1, endToken: -1}];
+        //         this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex = 0;
+        //     } else {
+        //         // If length of span list >= 2, pop
+        //         var temp = this.model.attributes.answerSpans[activeQueryIndex].span_list;
+        //         var temp_pop = temp.pop();
+        //         var temp_answer_index = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
+        //         var currentAnswerIndex = temp_answer_index - 1;
+        //         console.log("Start Pop");
+        //         console.log(temp);
+        //         console.log(temp_answer_index);
+        //         this.model.attributes.answerSpans[activeQueryIndex].span_list = temp;
+        //         this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex = currentAnswerIndex;
+        //         console.log(this.model.attributes.answerSpans[activeQueryIndex].span_list);
+        //         console.log(this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex);
+        //     }
+        //     this.model.trigger('change');
+        // },
         render: function() {
             this.$el.empty();
 
@@ -1109,12 +1156,18 @@
                     event.preventDefault();
                     this.model.stepActiveQueryIndex(!shift);
                     this.model.trigger('change');
-                } else if (key === '?' || key === 'h') {
+                } else if (key === '?') {
                     event.preventDefault();
                     $('#keyboard_shortcuts').modal('toggle');
                 } else if (key === 'i') {
                     event.preventDefault();
                     $('#instructions').collapse('toggle');
+                } else if (key === 'n') {
+                    event.preventDefault();
+                    this.candidateListView.selectNextAnswer();
+                } else if (key === 'm') {
+                    event.preventDefault();
+                    this.candidateListView.selectCancelAnswer();
                 } else if (key === 'ArrowRight' || key === 'ArrowLeft') {
                     event.preventDefault();
                     this.model.stepSelection(key === 'ArrowRight');
@@ -1167,11 +1220,11 @@
     });
 
     const notPresentText = 'no previous mention';
-    const notPresentButtonText = 'No previous mention';
+    const notPresentButtonText = '(q) No previous mention';
     const notPresentClass = 'btn-outline-primary';
 
     const notMentionText = 'not Mention';
-    const notMentionButtonText = 'Not mention';
+    const notMentionButtonText = '(w) Not mention';
     const notMentionClass = 'btn-outline-primary';
 
     const previousAnswerText = 'Previous Answer';
@@ -1183,11 +1236,11 @@
     const uncertainClass = 'btn-outline-primary';
 
     const nextAnswerText = 'Add span';
-    const nextAnswerButtonText = 'Add span';
+    const nextAnswerButtonText = '(n) Add span';
     const nextAnswerClass = 'btn-outline-primary';
 
     const cancelAnswerText = 'Cancel span';
-    const cancelAnswerButtonText = 'Cancel span';
+    const cancelAnswerButtonText = '(m) Cancel span';
     const cancelAnswerClass = 'btn-outline-primary';
 
     const activeQuerySpanClass = 'btn-dark';
@@ -1547,8 +1600,13 @@
                         </tr>
 
                         <tr>
-                            <td><span class="btn btn-light p-1 border">Space</span></td>
+                            <td><span class="btn btn-light p-1 border">n</span></td>
                             <td>Add Answer for Plural"</td>
+                        </tr>
+
+                        <tr>
+                            <td><span class="btn btn-light p-1 border">m</span></td>
+                            <td>Cancel Current Answer"</td>
                         </tr>
 
                         <tr>
