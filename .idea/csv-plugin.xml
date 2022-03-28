@@ -3,161 +3,14 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="/annotation_inferace/active-learning-hit/day1/session0/results.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day1/session0/unlabeled_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day1/session1/results.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day1/session1/unlabeled_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day1/session2/results.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day1/session2/unlabeled_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day2/session1/emcgraw1/results.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day2/session1/emcgraw1/unlabeled_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day2/session1/lfondre1/unlabeled_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day2/session1/nsvanid1/results.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day2/session1/nsvanid1/unlabeled_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day2/session2/emcgraw1/results.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day2/session2/emcgraw1/unlabeled_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day2/session2/jvillen3/results.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day2/session2/jvillen3/unlabeled_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day2/session2/lfondre1/results.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day2/session2/lfondre1/unlabeled_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day2/session2/nsvanid1/results.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/active-learning-hit/day2/session2/nsvanid1/unlabeled_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/multi-query-constrained-toy-data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/pilot-hits.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_inferace/train-181175-hits.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="/tbbt/original_transcript/1_10_seasons_tbbt.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/tbbt/parallel_corpus/sample_data.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -242,6 +95,20 @@
           </value>
         </entry>
         <entry key="/tbbt/parallel_corpus/trial_path.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/tbbt/parallel_corpus/win_10_no_overlap_mar_20.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/tbbt/parallel_corpus/win_15_no_overlap_mar_20.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
