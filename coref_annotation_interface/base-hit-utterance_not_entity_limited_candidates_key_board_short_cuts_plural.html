@@ -1116,15 +1116,15 @@
         </p>
 
         <p>
-            You will be shown several sentences from a document.
-            In the last sentence, we have highlighted a mention (a word or phrase) of an <em>entity</em> (a person, place, or thing).
+            You will be shown a scene from a TV show.
+            For each sentence, we have highlighted potential mentions (a word or phrase) of an <em>entity</em> (a person, place, or thing).
             This <em>entity mention</em> may be a pronoun (such as "she" or "their") or something else.
-            We need your help to find the immediately previous (most closely preceding) mention of the same entity, whether in the same sentence or in an earlier sentence.
+            We need your help to find an earlier mention of the same entity, whether in the same sentence or in an earlier sentence.
             You may select a mention by clicking and dragging your mouse pointer over the words making up the mention.
         </p>
 
         <p>
-            When selecting the immediately previous mention of the entity, please follow these rules:
+            When selecting the previous mention of the entity, please follow these rules:
         </p>
 
         <div class="card card-body">
@@ -1162,7 +1162,7 @@
                 The office manager does n't find her job challenging enough .  <span class="btn token btn-danger font-weight-bold">She</span> comes to work early in hopes of getting promoted .
             </p>
             <p>
-                While the entity mentions in the first sentence may appear to be "The office manager" and "her job," we also consider the possessive pronoun "her" to be a mention of the person in question.  So, we would ask you to select "her" as the immediately previous mention:
+                While the entity mentions in the first sentence may appear to be "The office manager" and "her job," we also consider the possessive pronoun "her" to be a mention of the person in question.  So, you may instead select "her" as a previous mention:
             </p>
             <p class="example_sentence">
                 The office manager does n't find <span class="btn token btn-dark">her</span> job challenging enough .  <span class="btn token btn-success font-weight-bold">She</span> comes to work early in hopes of getting promoted .
@@ -1170,45 +1170,45 @@
         </div>
 
         <div class="card card-body">
-            <h5 class="card-title">If there is no previous mention of the entity, select <span class="btn btn-outline-primary p-1">no previous mention</span> (discussed next).</h5>
+            <h5 class="card-title">If there is no previous mention of the entity, select <span class="btn btn-outline-primary p-1">no previous mention</span>.</h5>
             <p>For example:</p>
             <p class="example_sentence">
-                <span class="btn btn-outline-primary p-1">Lenoard</span>:Hi, I am Lenoard. This is Sheldon.
+                <span class="btn btn-outline-primary p-1">Leonard</span>: Hi, I am Leonard. This is Sheldon.
             </p>
             <p class="example_sentence">
                 <span class="btn btn-outline-primary p-1">Sheldon</span>: Hello.
             </p>
             <p class="example_sentence">
-                <span class="btn btn-outline-primary p-1">Lenoard</span>: We are here to pick up <span class="btn token btn-danger font-weight-bold">Penny's</span>  <span class="btn token btn-danger font-weight-bold">TV</span>.
+                <span class="btn btn-outline-primary p-1">Leonard</span>: We are here to pick up <span class="btn token btn-danger font-weight-bold">Penny's</span>  <span class="btn token btn-danger font-weight-bold">TV</span>.
             </p>
             <p>
-                We would ask you to click <span class="btn btn-outline-primary p-1">no previous mention</span> (which will be discussed next) as there is no previous mention of Penny's TV.
+                We would ask you to click <span class="btn btn-outline-primary p-1">No previous mention</span> as there is no previous mention of Penny's TV.
             </p>
 
         </div>
 
         <div class="card card-body">
-            <h5 class="card-title">If the selected span is not a mention, select <span class="btn btn-outline-primary p-1">not mention</span> (discussed next).</h5>
+            <h5 class="card-title">If the selected span does not refer to an entity (a person, place, or thing), please select <span class="btn btn-outline-primary p-1">Not mention</span>.</h5>
             <p>For example:</p>
             <p class="example_sentence">
-                <span class="btn btn-outline-primary p-1">Lenoard</span>:Hi, I am Lenoard. This is Sheldon.
+                <span class="btn btn-outline-primary p-1">Leonard</span>: Hi, I am Leonard. This is Sheldon.
             </p>
             <p class="example_sentence">
                 <span class="btn btn-outline-primary p-1">Sheldon</span>: Hello.
             </p>
             <p class="example_sentence">
-                <span class="btn btn-outline-primary p-1">Lenoard</span>: We are here to <span class="btn token btn-danger font-weight-bold">pick</span> <span class="btn token btn-danger font-weight-bold">up</span> Penny's TV.
+                <span class="btn btn-outline-primary p-1">Leonard</span>: We are here to <span class="btn token btn-danger font-weight-bold">pick</span> <span class="btn token btn-danger font-weight-bold">up</span> Penny's TV.
             </p>
             <p>
-                We would ask you to click <span class="btn btn-outline-primary p-1">not mention</span> (which will be discussed next) the selected span is not a mention.
+                We would ask you to click <span class="btn btn-outline-primary p-1">not mention</span> since the selected span does not refer to an entity.
             </p>
         </div>
 
         <div class="card card-body">
-            <h5 class="card-title">If the selected mention is a plural (refer to multiple different entity), please select different mentions.</h5>
+            <h5 class="card-title">If the selected mention is a plural (refer to multiple <em>different</em> entities), please select different mentions.</h5>
             <p>For example:</p>
             <p class="example_sentence">
-                <span class="btn btn-outline-primary p-1">Lenoard</span>:Hi, I am Lenoard. This is Sheldon.
+                <span class="btn btn-outline-primary p-1">Leonard</span>: Hi, I am Leonard. This is Sheldon.
             </p>
             <p class="example_sentence">
                 <span class="btn btn-outline-primary p-1">Sheldon</span>: Hello.
@@ -1218,26 +1218,26 @@
             </p>
 
             <p>
-                The highlighted entity mention in the last sentence is a plural mention "We". We would ask you to select mention of each entity it corefer to.
+                The highlighted entity mention in the last sentence is a plural mention "We". We would ask you to select mention of each <em>different</em> entity it corefer to.
             </p>
 
             <p class="example_sentence">
-                <span class="btn btn-outline-primary p-1">Lenoard</span>:Hi, I am Lenoard. This is Sheldon.
+                <span class="btn btn-outline-primary p-1">Leonard</span>: Hi, I am Leonard. This is Sheldon.
             </p>
             <p class="example_sentence">
                 <span class="btn token btn-dark">Sheldon</span>: Hello.
             </p>
             <p class="example_sentence">
-                <span class="btn token btn-dark">Lenoard</span>: <span class="btn token btn-success font-weight-bold">We</span> are here to pick up Penny's TV.
+                <span class="btn token btn-dark">Leonard</span>: <span class="btn token btn-success font-weight-bold">We</span> are here to pick up Penny's TV.
             </p>
         </div>
 
         <p class="pt-3">
-            In these simplified examples, we have highlighted one entity mention at a time and asked for previous mention of that entity.  In general, we will select one or more entity mentions in the last sentence (called <em>query mentions</em>) and ask for preceding mention for each one.  We will display the list of query mentions below the text; the active query mention will be highlighted in the text and bolded in the list below.  Dragging over text will select the immediately previous mention for the active query mention only; a different query mention may be activated by clicking on it in the list of query mentions, by using the provided "next query" and "previous query" buttons, or by pressing "Tab" or "Shift" + "Tab" on your keyboard.
+            In these simplified examples, we have highlighted one entity mention at a time and asked for previous mention of that entity.  In general, we will select multiple entity mentions across the document (called <em>query mentions</em>) and ask for a preceding mention for each one.  We will display the list of query mentions above the text; the active query mention will be highlighted in the text and bolded in the list above.  Dragging over text will select the immediately previous mention for the active query mention only; a different query mention may be activated by clicking on it in the list of query mentions, by using the provided "next query" and "previous query" buttons, or by pressing "Tab" or "Shift" + "Tab" on your keyboard.
         </p>
 
         <p>
-            Additionally, we will restrict the entity mention selections that can be submitted.  When you click and drag to select an entity mention in the text, the allowed mentions (called <em>candidate mentions</em>) that overlap your selection will be listed in a panel to the right, above the "no previous mention" button.  Click on a candidate mention to change your selection.
+            Additionally, we suggest entity mention selections. You click and drag to select an entity mention in the text, these mentions (called <em>candidate mentions</em>) that overlap your selection will be listed in a panel to the right, above the "no previous mention" button.  Click on a candidate mention to change your selection.
         </p>
 
         <p>Example:</p>
@@ -1287,13 +1287,13 @@
         </div>
 
         <p>
-            In this example, valid candidate mentions (or "no previous mention") have been selected for the first two query mentions.  The third query mention, "ritzy snacks," is active; we'd expect you to select "soft cheeses" as the immediately previous mention.  You could do so by clicking "(3) soft cheeses" in the right panel, pressing "3" on your keyboard, or clicking and dragging your mouse over "soft cheeses" in the text.
+            In this example, candidate mentions (or "no previous mention") have been selected for the first two query mentions.  The third query mention, "ritzy snacks," is active; you may wish to select "soft cheeses" as the immediately previous mention.  You could do so by clicking "(3) soft cheeses" in the right panel, pressing "3" on your keyboard, or clicking and dragging your mouse over "soft cheeses" in the text.
         </p>
 
-        <p>At any time, you may press "?" or "h" on your keyboard to see a list of keyboard shortcuts.  To hide the keyboard shortcuts box, click outside the box or press "?" or "h" again.</p>
+        <p>At any time, you may press "?" on your keyboard to see a list of keyboard shortcuts.  To hide the keyboard shortcuts box, click outside the box or press "?" again.</p>
 
         <p>
-            Finally, note that you may be asked for multiple mentions of the same entity, and that your selected candidate mentions may overlap with query mentions.
+            Finally, note that you may be asked for multiple mentions of the same entity and you do not need to pick a different mention each time.
         </p>
 
         <p>Example:</p>
@@ -1304,14 +1304,14 @@
                     <h5>Text</h5>
                     <div>
                         <div class="mb-3">
-                            <span class="btn token">One</span><span class="whitespace"> </span><span class="btn token">person</span><span class="whitespace"> </span><span class="btn token">usually</span><span class="whitespace"> </span><span class="btn token">comes</span><span class="whitespace"> </span><span class="btn token">to</span><span class="whitespace"> </span><span class="btn token">work</span><span class="whitespace"> </span><span class="btn token">early</span><span class="whitespace"> </span><span class="btn token">.</span><span class="whitespace"> </span><span class="btn token">Joan</span><span class="whitespace"> </span><span class="btn token">,</span><span class="whitespace"> </span><span class="btn token btn-dark">the</span><span class="whitespace"> </span><span class="btn token btn-dark">office</span><span class="whitespace"> </span><span class="btn token btn-dark">manager</span><span class="whitespace"> </span><span class="btn token">,</span><span class="whitespace"> </span><span class="btn token">wants</span><span class="whitespace"> </span><span class="btn token">a</span><span class="whitespace"> </span><span class="btn token">promotion</span><span class="whitespace"> </span><span class="btn token">,</span><span class="whitespace"> </span><span class="btn token">so</span><span class="whitespace"> </span><span class="btn token btn-success font-weight-bold">she</span><span class="whitespace"> </span><span class="btn token">likes</span><span class="whitespace"> </span><span class="btn token">to</span><span class="whitespace"> </span><span class="btn token">get</span><span class="whitespace"> </span><span class="btn token">a</span><span class="whitespace"> </span><span class="btn token">head</span><span class="whitespace"> </span><span class="btn token">start</span><span class="whitespace"> </span><span class="btn token">on</span><span class="whitespace"> </span><span class="btn token">the</span><span class="whitespace"> </span><span class="btn token">day</span><span class="whitespace"> </span><span class="btn token">.</span><span class="whitespace"> </span>
+                            <span class="btn token">One</span><span class="whitespace"> </span><span class="btn token">person</span><span class="whitespace"> </span><span class="btn token">usually</span><span class="whitespace"> </span><span class="btn token">comes</span><span class="whitespace"> </span><span class="btn token">to</span><span class="whitespace"> </span><span class="btn token">work</span><span class="whitespace"> </span><span class="btn token">early</span><span class="whitespace"> </span><span class="btn token">.</span><span class="whitespace"> </span><span class="btn token btn-dark">Joan</span><span class="whitespace"> </span><span class="btn token">,</span><span class="whitespace"> </span><span class="btn token">the</span><span class="whitespace"> </span><span class="btn token">office</span><span class="whitespace"> </span><span class="btn token">manager</span><span class="whitespace"> </span><span class="btn token">,</span><span class="whitespace"> </span><span class="btn token">wants</span><span class="whitespace"> </span><span class="btn token">a</span><span class="whitespace"> </span><span class="btn token">promotion</span><span class="whitespace"> </span><span class="btn token">,</span><span class="whitespace"> </span><span class="btn token">so</span><span class="whitespace"> </span><span class="btn token btn-success font-weight-bold">she</span><span class="whitespace"> </span><span class="btn token">likes</span><span class="whitespace"> </span><span class="btn token">to</span><span class="whitespace"> </span><span class="btn token">get</span><span class="whitespace"> </span><span class="btn token">a</span><span class="whitespace"> </span><span class="btn token">head</span><span class="whitespace"> </span><span class="btn token">start</span><span class="whitespace"> </span><span class="btn token">on</span><span class="whitespace"> </span><span class="btn token">the</span><span class="whitespace"> </span><span class="btn token">day</span><span class="whitespace"> </span><span class="btn token">.</span><span class="whitespace"> </span>
                         </div>
                         <div class="clearfix">
                             <div class="mb-2 float-start">
                                 <i class="me-2 mt-1">Active query:</i>
                                 <div class="btn me-4 mt-1 font-weight-bold btn-success p-1">she </div>
                                 <i class="me-2 mt-1">Answer:</i>
-                                <div class="btn me-4 mt-1 btn-dark p-1">the office manager </div>
+                                <div class="btn me-4 mt-1 btn-dark p-1">Joan </div>
                             </div>
                         </div>
                         <div class="clearfix">
@@ -1338,14 +1338,14 @@
                 <div class="float-end w-25 border-end">
                     <div class="p-3">
                         <h5>Overlapping Candidates</h5>
-                        <div class="btn-group-vertical"><button class="btn text-start btn-dark" type="button">(1) the office manager </button><button class="btn text-start btn-outline-dark" type="button">(2) office manager </button><button class="btn text-start answer_not_present_button btn-outline-primary" type="button">(n)o previous mention</button></div>
+                        <div class="btn-group-vertical"><button class="btn text-start btn-dark" type="button">(1) Joan </button><button class="btn text-start answer_not_present_button btn-outline-primary" type="button">(n)o previous mention</button></div>
                     </div>
                 </div>
             </div>
         </div>
 
         <p>
-            In this example, valid candidate mentions (or "no previous mention") have been selected for "Joan," "the office manager," and "a promotion."  Additionally, "the office manager" has been selected as the previous candidate mention for "she," the active query mention.  A valid candidate mention has not been selected for "the day;" we'd expect you to switch the active query mention to "the day" (by clicking "the day" in the query list, clicking the "next query" button, or pressing "Tab" on your keyboard) and then select "(n)o previous mention" in the right panel (or press "n" on your keyboard).
+            In this example, valid candidate mentions (or "no previous mention") have been selected for "Joan," "the office manager," and "a promotion."  Additionally, "Joan" has been selected as the previous candidate mention for "she," the active query mention.  A valid candidate mention has not been selected for "the day;" we'd expect you to switch the active query mention to "the day" (by clicking "the day" in the query list, clicking the "next query" button, or pressing "Tab" on your keyboard) and then select "(n)o previous mention" in the right panel (or press "n" on your keyboard). Note that "Joan" was also picked as the previous candidate mention for "the office manager," and this repetition is okay since it is correct.
         </p>
 
         <p>
