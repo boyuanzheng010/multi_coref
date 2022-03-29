@@ -10,6 +10,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/tbbt/parallel_corpus/sample_annotate.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/tbbt/parallel_corpus/sample_data.csv">
           <value>
             <Attribute>
