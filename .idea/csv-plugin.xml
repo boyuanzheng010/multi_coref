@@ -24,6 +24,34 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/coref_annotation_interface/data/active-learning-hit/day2/session1/lfondre1/results.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/coref_annotation_interface/data/active-learning-hit/day2/session1/lfondre1/unlabeled_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/old_annotation_inferace/active-learning-hit/day2/session1/lfondre1/results.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/old_annotation_inferace/active-learning-hit/day2/session1/lfondre1/unlabeled_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/tbbt/original_transcript/1_10_seasons_tbbt.csv">
           <value>
             <Attribute>
