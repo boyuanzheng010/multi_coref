@@ -1464,7 +1464,7 @@
         </div>
 
         <div class="card card-body">
-            <h5 class="card-title">If there is no previous mention of the entity, select <span class="btn btn-outline-primary p-1">no previous mention</span>.</h5>
+            <h5 class="card-title">If there is no previous mention of the entity, select <span class="btn btn-outline-primary p-1">(q) No previous mention</span>.</h5>
             <p>For example:</p>
             <p class="example_sentence">
                 <span class="btn btn-outline-primary p-1">Leonard</span>:Hi, I am Leonard. This is Sheldon.
@@ -1476,13 +1476,15 @@
                 <span class="btn btn-outline-primary p-1">Leonard</span>: We are here to pick up <span class="btn token btn-danger font-weight-bold">Penny's</span>  <span class="btn token btn-danger font-weight-bold">TV</span>.
             </p>
             <p>
-                We would ask you to click <span class="btn btn-outline-primary p-1">No previous mention</span> as there is no previous mention of Penny's TV.
+                We would ask you to click <span class="btn btn-outline-primary p-1">(q) No previous mention</span> as there is no previous mention of Penny's TV.
             </p>
-
+            <p>
+                You could also do this by pressing "q" on your keyboard shortcut.
+            </p>
         </div>
 
         <div class="card card-body">
-            <h5 class="card-title">If the selected span does not refer to an entity (a person, place, or thing), please select <span class="btn btn-outline-primary p-1">Not mention</span>.</h5>
+            <h5 class="card-title">If the selected span does not refer to an entity (a person, place, or thing), please select <span class="btn btn-outline-primary p-1">(w) Not mention</span>.</h5>
             <p>For example:</p>
             <p class="example_sentence">
                 <span class="btn btn-outline-primary p-1">Leonard</span>:Hi, I am Leonard. This is Sheldon.
@@ -1494,12 +1496,46 @@
                 <span class="btn btn-outline-primary p-1">Leonard</span>: We are here to <span class="btn token btn-danger font-weight-bold">pick</span> <span class="btn token btn-danger font-weight-bold">up</span> Penny's TV.
             </p>
             <p>
-                We would ask you to click <span class="btn btn-outline-primary p-1">not mention</span> since the selected span does not refer to an entity.
+                We would ask you to click <span class="btn btn-outline-primary p-1">(w) Not mention</span> since the selected span does not refer to an entity.
+            </p>
+            <p>
+                You could also do this by pressing "w" on your keyboard shortcut.
             </p>
         </div>
 
         <div class="card card-body">
             <h5 class="card-title">If the selected mention is a plural (refer to multiple <em>different</em> entities), please select different mentions.</h5>
+            <p>For example:</p>
+            <p>
+                The highlighted entity mention in the last sentence is a plural mention "We". We would ask you to select mention of each <em>different</em> entity it corefer to. You need select both <span class="btn btn-outline-primary p-1">Sheldon</span> and  <span class="btn btn-outline-primary p-1">Leonard</span>. Now you have select the mention <span class="btn btn-outline-primary p-1">Leonard</span>.
+            </p>
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Leonard</span>:Hi, I am Leonard. This is Sheldon.
+            </p>
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Sheldon</span>: Hello.
+            </p>
+            <p class="example_sentence">
+                <span class="btn token btn-dark">Leonard</span>: <span class="btn token btn-success font-weight-bold">We</span> are here to pick up Penny's TV.
+            </p>
+            <p>
+                To select plural, you need click the <span class="btn btn-outline-primary p-1">(n) Add span</span> button. Then, the selected mention will be stored and you can select the next mention.
+            </p>
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Leonard</span>:Hi, I am Leonard. This is Sheldon.
+            </p>
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Sheldon</span>: Hello.
+            </p>
+            <p class="example_sentence">
+                <span class="btn token btn-dark">Leonard</span>: <span class="btn token btn-danger font-weight-bold">We</span> are here to pick up Penny's TV.
+            </p>
+        </div>
+
+
+        <div class="card card-body">
+            <h5 class="card-title">Keyboard Short Cuts to select speaker.</h5>
+            <p>You can press "k" on your keyboard shortcut to select the speaker of the current utterance. You could select the speaker in previous utterance by pressing "j" in keyboard and speaker in next utterance by pressing "l" in keyboard.</p>
             <p>For example:</p>
             <p class="example_sentence">
                 <span class="btn btn-outline-primary p-1">Leonard</span>:Hi, I am Leonard. This is Sheldon.
@@ -1508,23 +1544,13 @@
                 <span class="btn btn-outline-primary p-1">Sheldon</span>: Hello.
             </p>
             <p class="example_sentence">
-                <span class="btn btn-outline-primary p-1">Leonard</span>: <span class="btn token btn-danger font-weight-bold">We</span> are here to pick up Penny's TV.
-            </p>
-
-            <p>
-                The highlighted entity mention in the last sentence is a plural mention "We". We would ask you to select mention of each <em>different</em> entity it corefer to.
-            </p>
-
-            <p class="example_sentence">
-                <span class="btn btn-outline-primary p-1">Leonard</span>:Hi, I am Leonard. This is Sheldon.
+                <span class="btn token btn-dark">Leonard</span>: <span class="btn token btn-success font-weight-bold">I</span> am here to pick up Penny's TV.
             </p>
             <p class="example_sentence">
-                <span class="btn token btn-dark">Sheldon</span>: Hello.
-            </p>
-            <p class="example_sentence">
-                <span class="btn token btn-dark">Leonard</span>: <span class="btn token btn-success font-weight-bold">We</span> are here to pick up Penny's TV.
+                <span class="btn btn-outline-primary p-1">Sheldon</span>: Yeah.
             </p>
         </div>
+
 
         <p class="pt-3">
             In these simplified examples, we have highlighted one entity mention at a time and asked for previous mention of that entity.  In general, we will select multiple entity mentions across the document (called <em>query mentions</em>) and ask for a preceding mention for each one.  We will display the list of query mentions above the text; the active query mention will be highlighted in the text and bolded in the list above.  Dragging over text will select the immediately previous mention for the active query mention only; a different query mention may be activated by clicking on it in the list of query mentions, by using the provided "next query" and "previous query" buttons, or by pressing "Tab" or "Shift" + "Tab" on your keyboard.
