@@ -85,10 +85,8 @@
     /* globals Backbone, _, $, (...?) */
 
     /**
-
      The DataModel object should be initialized with a JSON object with the
      format:
-
      {
        "sentences": [
          ["john", "crashed", "his", "car", "."],
@@ -136,9 +134,7 @@
          },
        ]
      }
-
      Empty sentences are translated into paragraph breaks.
-
      */
     var DataModel = Backbone.Model.extend({
         defaults: {
@@ -185,15 +181,15 @@
                 function(span) { return span.sentenceIndex * maxLength * maxLength +
                                         span.startToken * maxLength +
                                         span.endToken; });
-            
+
             this.attributes.clickSpans = _.sortBy(
                 this.attributes.clickSpans,
                 function(span) { return span.sentenceIndex * maxLength * maxLength +
                                         span.startToken * maxLength +
                                         span.endToken; });
-            
+
             // Add the maximum sentence length
-            
+
         },
         // clearAnswerSpan: function(answerIndex) {
         //     this.attributes.answerSpans[answerIndex].sentenceIndex = -1;
@@ -232,8 +228,8 @@
         // clearSingleAnswerSpan: function(answerIndex, tokenIndex) {
         //     answerSpanLength = this.attributes.answerSpans[answerIndex].span_list.length;
         //     for (var i = 0; i < answerSpanLength-1; i++) {
-        //         if ((this.attributes.answerSpans[answerIndex].span_list[i].startToken <= tokenIndex) 
-        //         && (this.attributes.answerSpans[answerIndex].span_list[i].endToken >= tokenIndex) 
+        //         if ((this.attributes.answerSpans[answerIndex].span_list[i].startToken <= tokenIndex)
+        //         && (this.attributes.answerSpans[answerIndex].span_list[i].endToken >= tokenIndex)
         //         && (this.attributes.answerSpans[answerIndex].currentAnswerIndex==i)) {
         //             this.attributes.answerSpans[answerIndex].span_list[i] = {
         //                 sentenceIndex : -1,
@@ -351,7 +347,7 @@
         // answerSpanIsPreceding: function(answerSpan) {
         //     return spanPrecedes(answerSpan, answerSpan.querySpan);
         // },
-        
+
         // Currently, use the first element in span_list
         answerSpanIsPreceding: function(answerSpan) {
             var answerSpanIndex = answerSpan.currentAnswerIndex;
@@ -392,7 +388,7 @@
         //         this.attributes.answerSpans,
         //         function(span) { return span.status !== AnswerSpanStatus.OK });
         // },
-        
+
         // For this version: use the span_list[-1]
         validateAnswerSpans: function() {
             for (var answerSpan of this.attributes.answerSpans) {
@@ -575,10 +571,12 @@
                 this.selectCandidate(-1, -1);
             } else if (key == 'w') {
                 this.selectCandidate(-2, -2);
-            } else if ('slprhab'.split('').includes(key)) {
-                // console.log("Start Select Character by Key");
-                // console.log(key);
-                this.selectCharacter(key);
+            } else if (key == 'k') {
+                this.selectCurrentCharacter();
+            } else if (key == 'j') {
+                this.selectPreviousCharacter();
+            } else if (key == 'l') {
+                this.selectNextCharacter();
             } else if (!isNaN(keyInt) && 0 < keyInt && keyInt < 10) {
                 var button = this.$('button').filter(function() {
                     return $(this).data('index') == keyInt
@@ -655,59 +653,117 @@
             this.model.trigger('change');
         },
 
-        selectCharacter: function(characterShort) {
+        // selectCharacter: function(characterShort) {
+        //     var activeQueryIndex = this.model.attributes.activeQueryIndex;
+        //     var answerSpanIndex = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
+        //     var sentenceIndex = this.model.attributes.querySpans[activeQueryIndex].sentenceIndex;
+
+        //     // Define Character Name
+        //     if (characterShort == 's') {
+        //         var character = "Sheldon";
+        //     } else if (characterShort == 'l') {
+        //         var character = "Leonard";
+        //     } else if (characterShort == 'l') {
+        //         var character = "Leonard";
+        //     } else if (characterShort == 'p') {
+        //         var character = "Penny";
+        //     } else if (characterShort == 'r') {
+        //         var character = "Raj";
+        //     } else if (characterShort == 'h') {
+        //         var character = "Howard";
+        //     } else if (characterShort == 'a') {
+        //         var character = "Amy";
+        //     } else if (characterShort == 'b') {
+        //         var character = "Bernadette";
+        //     }
+
+        //     // Iterate characters from current sentence to the start sentence
+        //     console.log("Start the Loop");
+        //     for (var i = 0; i <= sentenceIndex; i++) {
+        //         console.log("Looping Index:" + i);
+        //         var currentSentence = this.model.attributes.sentences[sentenceIndex - i];
+        //         if (currentSentence.length < 1) {
+        //             // If the sentence is null, then pass
+        //             continue;
+        //         } else {
+        //             var CharacterToIterate = currentSentence[0];
+        //             console.log(character, CharacterToIterate);
+        //             // Check whether the character is target
+        //             if (character == CharacterToIterate) {
+        //                 console.log("Find the target");
+        //                 console.log(character, CharacterToIterate);
+        //                 console.log(answerSpanIndex);
+        //                 console.log(sentenceIndex);
+        //                 // If character is the target, enter the character
+        //                 this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
+        //                 this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
+        //                 this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex - i;
+
+        //                 this.model.trigger('change');
+        //                 break;
+        //             }
+        //         }
+
+        //     }
+        // },
+
+        // selectCurrentCharacter: function(characterShort) {
+        //     var activeQueryIndex = this.model.attributes.activeQueryIndex;
+        //     var answerSpanIndex = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
+        //     var sentenceIndex = this.model.attributes.querySpans[activeQueryIndex].sentenceIndex;
+        //
+        //     if (characterShort == 's') {
+        //         this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
+        //         this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
+        //         this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex;
+        //         this.model.trigger("change");
+        //     }
+        // },
+
+        selectCurrentCharacter: function() {
             var activeQueryIndex = this.model.attributes.activeQueryIndex;
             var answerSpanIndex = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
             var sentenceIndex = this.model.attributes.querySpans[activeQueryIndex].sentenceIndex;
 
-            // Define Character Name
-            if (characterShort == 's') {
-                var character = "Sheldon";
-            } else if (characterShort == 'l') {
-                var character = "Leonard";
-            } else if (characterShort == 'l') {
-                var character = "Leonard";
-            } else if (characterShort == 'p') {
-                var character = "Penny";
-            } else if (characterShort == 'r') {
-                var character = "Raj";
-            } else if (characterShort == 'h') {
-                var character = "Howard";
-            } else if (characterShort == 'a') {
-                var character = "Amy";
-            } else if (characterShort == 'b') {
-                var character = "Bernadette";
+            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
+            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
+            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex;
+            this.model.trigger("change");
+        },
+
+        selectPreviousCharacter: function() {
+            console.log("Go to Previous Character");
+            var activeQueryIndex = this.model.attributes.activeQueryIndex;
+            var answerSpanIndex = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
+            var sentenceIndex = this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex;
+
+            if (sentenceIndex == 0 || sentenceIndex == -1) {
+                sentenceIndex = 1;
+            }
+            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
+            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
+            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex - 1;
+            console.log(this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex);
+            this.model.trigger("change");
+        },
+
+        selectNextCharacter: function() {
+            console.log("Go to Next Character");
+            var activeQueryIndex = this.model.attributes.activeQueryIndex;
+            var answerSpanIndex = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
+            var sentenceIndex = this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex;
+            var sentenceLength = this.model.attributes.sentences.length - 1;
+
+            if (sentenceIndex == sentenceLength) {
+                sentenceIndex = sentenceLength - 1;
             }
 
-            // Iterate characters from current sentence to the start sentence
-            console.log("Start the Loop");
-            for (var i = 0; i <= sentenceIndex; i++) {
-                console.log("Looping Index:" + i);
-                var currentSentence = this.model.attributes.sentences[sentenceIndex - i];
-                if (currentSentence.length < 1) {
-                    // If the sentence is null, then pass
-                    continue;
-                } else {
-                    var CharacterToIterate = currentSentence[0];
-                    console.log(character, CharacterToIterate);
-                    // Check whether the character is target
-                    if (character == CharacterToIterate) {
-                        console.log("Find the target");
-                        console.log(character, CharacterToIterate);
-                        console.log(answerSpanIndex);
-                        console.log(sentenceIndex);
-                        // If character is the target, enter the character
-                        this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
-                        this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
-                        this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex - i;
-                        
-                        this.model.trigger('change');
-                        break;
-                    }
-                }
-                
-            }
+            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
+            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
+            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex + 1;
+            this.model.trigger("change");
         },
+
 
         onClick: function(event) {
             var startToken = $(event.currentTarget).data('start_token');
@@ -820,7 +876,7 @@
                 .data('start_token', -2)
                 .data('end_token', -2)
                 .data('index', -1)
-                .text(nextAnswerButtonText));   
+                .text(nextAnswerButtonText));
             this.$el.append($('<button>')
                 .addClass('btn text-start cancel_answer cancel_answer_button')
                 .addClass(cancelAnswerClass)
@@ -828,8 +884,8 @@
                 .data('start_token', -2)
                 .data('end_token', -2)
                 .data('index', -1)
-                .text(cancelAnswerButtonText));   
-            
+                .text(cancelAnswerButtonText));
+
             this.$el.append($('<h5>').text('No answer reason:'));
             this.$el.append($('<button>')
                 .addClass('btn text-start clickable answer_not_present_button')
@@ -850,7 +906,7 @@
                 .data('end_token', -2)
                 .data('index', -1)
                 .text(notMentionButtonText));
-                    
+
             return this;
         }
     });
@@ -967,7 +1023,7 @@
                         ' btn-success' :
                         ' btn-danger'))
                     .text(activeQuerySpanText))
-                
+
                                 // Add "Answer:" and the selected answer span
                                 .append($('<i>').addClass('me-2 mt-1').text('Answer:'))
                 .append($('<div>')
@@ -1082,7 +1138,7 @@
                             .data('sentence_index', si)
                             .data('token_index', ti)
                             .text(sentences[si][ti]);
-                        
+
                         // Try to use the last token in sentence as the active Query Element
                         if (this.model.isPartOfQuerySpan(activeQueryIndex, si, ti)) {
                             if (activeQueryElement === null) {
@@ -1122,8 +1178,8 @@
                     }
 
                     paragraph.append($('<p>'))
-                    
-                    
+
+
                 }
             }
             textDiv.append(paragraph);
@@ -1176,7 +1232,7 @@
                 } else if ('123456789qw'.split('').includes(key)) {
                     event.preventDefault();
                     this.candidateListView.selectCandidateByKey(key);
-                } else if ('slprhab'.split('').includes(key)) {
+                } else if ('jkl'.split('').includes(key)) {
                     event.preventDefault();
                     this.candidateListView.selectCandidateByKey(key);
                 }
@@ -1389,7 +1445,7 @@
             <p>
                 We would ask you to click <span class="btn btn-outline-primary p-1">No previous mention</span> as there is no previous mention of Penny's TV.
             </p>
-            
+
         </div>
 
         <div class="card card-body">
@@ -1614,10 +1670,22 @@
                             <td><span class="btn btn-light p-1 border">Tab</span></td>
                             <td>Go to next query mention</td>
                         </tr>
-                        
+
                         <tr>
                             <td><span class="btn btn-light p-1 border me-2">Shift</span><span class="btn btn-light p-1 border">Tab</span></td>
                             <td>Go to previous query mention</td>
+                        </tr>
+                        <tr>
+                            <td><span class="btn btn-light p-1 border">j</span></td>
+                            <td>Select previous speaker</td>
+                        </tr>
+                        <tr>
+                            <td><span class="btn btn-light p-1 border">k</span></td>
+                            <td>Select current speaker</td>
+                        </tr>
+                        <tr>
+                            <td><span class="btn btn-light p-1 border">l</span></td>
+                            <td>Select next speaker</td>
                         </tr>
                         <tr>
                             <td><span class="btn btn-light p-1 border">&rightarrow;</span></td>
@@ -1634,45 +1702,6 @@
                         <tr>
                             <td><span class="btn btn-light p-1 border">?</span></td>
                             <td>Show/hide keyboard shortcuts</td>
-                        </tr>
-
-                        <tr>
-                            <td>Character Short Cut</td>
-                        </tr>
-
-                        <tr>
-                            <td><span class="btn btn-light p-1 border">s</span></td>
-                            <td>Sheldon</td>
-                        </tr>
-
-                        <tr>
-                            <td><span class="btn btn-light p-1 border">l</span></td>
-                            <td>Leonard</td>
-                        </tr>
-
-                        <tr>
-                            <td><span class="btn btn-light p-1 border">p</span></td>
-                            <td>Penny</td>
-                        </tr>
-
-                        <tr>
-                            <td><span class="btn btn-light p-1 border">r</span></td>
-                            <td>Raj</td>
-                        </tr>
-
-                        <tr>
-                            <td><span class="btn btn-light p-1 border">h</span></td>
-                            <td>Howard</td>
-                        </tr>
-
-                        <tr>
-                            <td><span class="btn btn-light p-1 border">a</span></td>
-                            <td>Amy</td>
-                        </tr>
-
-                        <tr>
-                            <td><span class="btn btn-light p-1 border">b</span></td>
-                            <td>Bernadette</td>
                         </tr>
 
                     </table>

@@ -16,7 +16,10 @@
 
 --base-hit-utterance_not_entity_limited_candidates_key_board_short_cuts_plural_basic.html：
 	Change the answerSpan data structure to a list structure
-	But the data modification is still performed on the first element of the list and achieve the functionality as --base-hit-utterance_not_entity_limited_candidates_key_board_short_cuts.html
+	But the data modification is still performed on the first element of the list and achieve the functionality as 
+
+--current_version_character_simplified.html
+	Simplify the speaker short cut to Previous/Current/Next Speaker
 
 
 
