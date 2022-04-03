@@ -3,20 +3,6 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="/annotation_result/data/golden.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/annotation_result/data/turk.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="/coref_annotation_interface/current_sample_data.csv">
           <value>
             <Attribute>
@@ -32,6 +18,13 @@
           </value>
         </entry>
         <entry key="/coref_annotation_interface/data/active-learning-hit/day2/session1/lfondre1/unlabeled_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/coref_annotation_interface/sample_pilot_study.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -67,6 +60,13 @@
           </value>
         </entry>
         <entry key="/tbbt/parallel_corpus/sample_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/tbbt/parallel_corpus/sample_pilot_study.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
