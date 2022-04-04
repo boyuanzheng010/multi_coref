@@ -322,10 +322,18 @@
         },
         toggleNotPresent: function(answerIndex) {
             this.attributes.answerSpans[answerIndex].notPresent = !this.attributes.answerSpans[answerIndex].notPresent;
+            var notPresent = this.attributes.answerSpans[answerIndex].notPresent;
+            if (notPresent) {
+                this.attributes.answerSpans[answerIndex].notMention = false;
+            }
             return this.attributes.answerSpans[answerIndex].notPresent;
         },
         toggleNotMention: function(answerIndex) {
             this.attributes.answerSpans[answerIndex].notMention = !this.attributes.answerSpans[answerIndex].notMention;
+            var notMention = this.attributes.answerSpans[answerIndex].notMention;
+            if (notMention) {
+                this.attributes.answerSpans[answerIndex].notPresent = false;
+            }
             return this.attributes.answerSpans[answerIndex].notMention;
         },
         setDrag: function(startSentence, startToken, lastSentence, lastToken) {
@@ -802,12 +810,26 @@
                         ' btn-success' :
                         ' btn-danger'))
                     .text(activeQuerySpanText))
+                .append($('<i>').addClass('me-2 mt-1').text('Answer:'));
+                // .append($('<div>')
+                //     .addClass('btn p-1 me-4 mt-1' + (activeQueryIsValid ? ((activeQuerySpan.notPresent || activeQuerySpan.notMention) ? ' btn-primary' : ' btn-dark') :' btn-dark disabled'))
+                //     .text(activeQueryIsValid ? (activeQuerySpan.notPresent ? notPresentText : (activeQuerySpan.notMention ? notMentionText: activeAnswerSpanText)) : activeAnswerSpanText + ' (Please select a span)'));
 
-                                // Add "Answer:" and the selected answer span
-                                .append($('<i>').addClass('me-2 mt-1').text('Answer:'))
-                .append($('<div>')
-                    .addClass('btn p-1 me-4 mt-1' + (activeQueryIsValid ? ((activeQuerySpan.notPresent || activeQuerySpan.notMention) ? ' btn-primary' : ' btn-dark') :' btn-dark disabled'))
-                    .text(activeQueryIsValid ? (activeQuerySpan.notPresent ? notPresentText : (activeQuerySpan.notMention ? notMentionText: activeAnswerSpanText)) : activeAnswerSpanText + ' (invalid)'));
+            var answerSpanLength = this.model.attributes.answerSpans[activeQueryIndex].span_list.length;
+            for (var i = 0; i < answerSpanLength-1; i++) {
+                var answerText = this.model.getSpanText(this.model.attributes.answerSpans[activeQueryIndex].span_list[i]);
+                statusDiv.append($('<div>')
+                    .addClass('btn p-1 me-4 mt-1' + ((activeQuerySpan.notPresent || activeQuerySpan.notMention) ? ' btn-primary' : ' btn-dark'))
+                    .text(activeQuerySpan.notPresent ? notPresentText : (activeQuerySpan.notMention ? notMentionText: answerText)));
+                    // .text(activeQueryIsValid ? (activeQuerySpan.notPresent ? notPresentText : (activeQuerySpan.notMention ? notMentionText: answerText)) : answerText + ' (Please select a span)'));
+            }
+            // For the last answerSpan
+            var answerText = this.model.getSpanText(this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanLength-1]);
+            statusDiv.append($('<div>')
+                .addClass('btn p-1 me-4 mt-1' + (activeQueryIsValid ? ((activeQuerySpan.notPresent || activeQuerySpan.notMention) ? ' btn-primary' : ' btn-dark') :' btn-dark disabled'))
+                .text(activeQueryIsValid ? (activeQuerySpan.notPresent ? notPresentText : (activeQuerySpan.notMention ? notMentionText: answerText)) : answerText + ' (Please select a span)'));
+
+
 
             var queriesDiv = $('<div>')
                 .addClass('d-flex justify-content-between')
@@ -934,7 +956,7 @@
                         // Former Answer Span
                         if (this.model.isPartOfOtherAnswerSpan(activeQueryIndex, si, ti)) {
                             tokenSpan.addClass(activeQuerySpanClass);
-                            tokenSpan.addClass('disabled');
+                            // tokenSpan.addClass('disabled');
                         }
                         // For the speaker button
                         if(ti===0){
