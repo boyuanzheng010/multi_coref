@@ -150,17 +150,6 @@
             sentenceNumber: 0
         },
         initialize: function() {
-            // for (var query of this.attributes.querySpans) {
-            //     this.attributes.answerSpans.push({
-            //         querySpan: query,
-            //         notPresent: false,
-            //         notMention: false,
-            //         sentenceIndex: -1,
-            //         startToken: -1,
-            //         endToken: -1,
-            //         status: AnswerSpanStatus.OK
-            //     });
-            // }
             for (var query of this.attributes.querySpans) {
                 this.attributes.answerSpans.push({
                     querySpan: query,
@@ -187,22 +176,7 @@
                 function(span) { return span.sentenceIndex * maxLength * maxLength +
                                         span.startToken * maxLength +
                                         span.endToken; });
-
-            // Add the maximum sentence length
-
         },
-        // clearAnswerSpan: function(answerIndex) {
-        //     this.attributes.answerSpans[answerIndex].sentenceIndex = -1;
-        //     this.attributes.answerSpans[answerIndex].startToken = -1;
-        //     this.attributes.answerSpans[answerIndex].endToken = -1;
-        // },
-        // clearAnswerSpan: function(answerIndex) {
-        //     this.attributes.answerSpans[answerIndex].span_list = [{
-        //         sentenceIndex : -1,
-        //         startToken : -1,
-        //         endToken : -1
-        //     }];
-        // },
         clearAllAnswerSpan: function(answerIndex) {
             this.attributes.answerSpans[answerIndex].span_list = [{
                 sentenceIndex : -1,
@@ -211,36 +185,6 @@
             }];
             this.attributes.answerSpans[answerIndex].currentAnswerIndex = 0;
         },
-
-        // clearSingleAnswerSpan: function(answerIndex, tokenIndex) {
-        //     answerSpanLength = this.attributes.answerSpans[answerIndex].span_list.length;
-        //     for (var i = 0; i < answerSpanLength-1; i++) {
-        //         if ((this.attributes.answerSpans[answerIndex].span_list[i].startToken <= tokenIndex) && (this.attributes.answerSpans[answerIndex].span_list[i].endToken >= tokenIndex)) {
-        //             this.attributes.answerSpans[answerIndex].span_list[answerSpanLength-1] = {
-        //                 sentenceIndex : -1,
-        //                 startToken : -1,
-        //                 endToken : -1
-        //             }
-        //         }
-        //     }
-        // },
-
-        // clearSingleAnswerSpan: function(answerIndex, tokenIndex) {
-        //     answerSpanLength = this.attributes.answerSpans[answerIndex].span_list.length;
-        //     for (var i = 0; i < answerSpanLength-1; i++) {
-        //         if ((this.attributes.answerSpans[answerIndex].span_list[i].startToken <= tokenIndex)
-        //         && (this.attributes.answerSpans[answerIndex].span_list[i].endToken >= tokenIndex)
-        //         && (this.attributes.answerSpans[answerIndex].currentAnswerIndex==i)) {
-        //             this.attributes.answerSpans[answerIndex].span_list[i] = {
-        //                 sentenceIndex : -1,
-        //                 startToken : -1,
-        //                 endToken : -1
-        //             }
-        //         }
-        //     }
-        //     this.trigger('change');
-        // },
-
         clearSingleAnswerSpan: function(answerIndex, tokenIndex) {
             var answerSpanIndex = this.attributes.answerSpans[answerIndex].currentAnswerIndex;
             this.attributes.answerSpans[answerIndex].span_list[answerSpanIndex] = {sentenceIndex : -1, startToken : -1, endToken : -1};
@@ -258,25 +202,38 @@
                 return '';
             }
         },
+
+        getAllSpanText: function(span) {
+            if (span.sentenceIndex !== -1) {
+                var s = '';
+                for (var ti = span.startToken; ti < span.endToken; ti++) {
+                    s += this.attributes.sentences[span.sentenceIndex][ti] + ' ';
+                }
+                return s;
+            } else {
+                return '';
+            }
+        },
+
         getQuerySpanText: function(answerIndex) {
             return this.getSpanText(this.attributes.querySpans[answerIndex]);
         },
         getAnswerSpanText: function(answerIndex) {
             var answerSpanIndex = this.attributes.answerSpans[answerIndex].currentAnswerIndex;
-            // console.log("Start Get Answer Span Text:");
-            // console.log(answerSpanIndex);
-            // console.log(this.attributes.answerSpans[answerIndex].span_list);
-            // console.log(this.attributes.answerSpans[answerIndex].span_list[answerSpanIndex]);
-            // console.log(this.getSpanText(this.attributes.answerSpans[answerIndex].span_list[answerSpanIndex]));
-            // console.log("End Get Answer Span Text");
             return this.getSpanText(this.attributes.answerSpans[answerIndex].span_list[answerSpanIndex]);
+        },
+        getAllAnswerSpanText: function(answerIndex) {
+            var answerSpanLength = this.attributes.answerSpans[answerIndex].span_list.length;
+            var answerSpanIndex = this.attributes.answerSpans[answerIndex].currentAnswerIndex;
+            var answerText = "";
+            for (var i = 0; i < answerSpanLength; i++) {
+                answerText += "|"
+                answerText += this.getSpanText(this.attributes.answerSpans[answerIndex].span_list[i]);
+            }
+            return answerText;
         },
         isPartOfAnswerSpan: function(answerIndex, si, ti) {
             var answerSpanIndex = this.attributes.answerSpans[answerIndex].currentAnswerIndex;
-            // console.log("Current Answer Span Index:");
-            // console.log(answerSpanIndex = this.attributes.answerSpans[answerIndex].currentAnswerIndex);
-            // console.log(this.attributes.answerSpans[answerIndex].span_list[answerSpanIndex])
-            // console.log("---")
             return spanContainsToken(this.attributes.answerSpans[answerIndex].span_list[answerSpanIndex], si, ti);
         },
         isPartOfAnyAnswerSpan: function(answerIndex, si, ti) {
@@ -299,36 +256,13 @@
         },
         isPartOfCurrentAnswerSpan: function(answerIndex, si, ti) {
             var answerSpanIndex = this.attributes.answerSpans[answerIndex].currentAnswerIndex;
-            // console.log("Current Answer Span Index:");
-            // console.log(answerSpanIndex = this.attributes.answerSpans[answerIndex].currentAnswerIndex);
-            // console.log(this.attributes.answerSpans[answerIndex].span_list[answerSpanIndex])
-            // console.log("---")
             return spanContainsToken(this.attributes.answerSpans[answerIndex].span_list[answerSpanIndex], si, ti);
         },
-        // isPartOfQuerySpan: function(answerIndex, si, ti) {
-        //     return spanContainsToken(this.attributes.querySpans[answerIndex], si, ti);
-        // },
         isPartOfQuerySpan: function(answerIndex, si, ti) {
             return spanContainsToken(this.attributes.querySpans[answerIndex], si, ti);
         },
-        // updateAnswerSpan: function(answerIndex, sentenceIndex, tokenIndex) {
-        //     var answerSpan = this.attributes.answerSpans[answerIndex];
-        //     if (answerSpan.sentenceIndex === -1) {
-        //         answerSpan.sentenceIndex = sentenceIndex;
-        //         answerSpan.startToken = tokenIndex;
-        //         answerSpan.endToken = tokenIndex + 1;
-        //     } else if (answerSpan.sentenceIndex === sentenceIndex) {
-        //         answerSpan.startToken = _.min([this.attributes.dragStartToken, tokenIndex]);
-        //         answerSpan.endToken = _.max([this.attributes.dragStartToken, tokenIndex]) + 1;
-        //     }
-        //     answerSpan.notPresent = false;
-        //     answerSpan.notMention = false;
-        // },
-
         // Currently, only update the first element in span list
         updateAnswerSpan: function(answerIndex, sentenceIndex, tokenIndex) {
-            // console.log("Start Update Answer Span:");
-            // console.log("answerIndex:" + answerIndex + " sentenceIndex:" + sentenceIndex + " tokenIndex:" + tokenIndex);
             var answerSpan = this.attributes.answerSpans[answerIndex];
             var answerSpanIndex = answerSpan.currentAnswerIndex;
             var currentAnswerSpan = answerSpan[answerSpanIndex];
@@ -344,10 +278,6 @@
             answerSpan.notPresent = false;
             answerSpan.notMention = false;
         },
-        // answerSpanIsPreceding: function(answerSpan) {
-        //     return spanPrecedes(answerSpan, answerSpan.querySpan);
-        // },
-
         // Currently, use the first element in span_list
         answerSpanIsPreceding: function(answerSpan) {
             var answerSpanIndex = answerSpan.currentAnswerIndex;
@@ -362,33 +292,6 @@
                     return spanEquals(answerSpan.span_list[answerSpanIndex], candidateSpan);
                 });
         },
-        // answerSpanIsCandidate: function(answerSpan) {
-        //     return _.some(
-        //         this.attributes.candidateSpans,
-        //         function(candidateSpan) {
-        //             return spanEquals(answerSpan, candidateSpan);
-        //         });
-        // },
-        // validateAnswerSpans: function() {
-        //     for (var answerSpan of this.attributes.answerSpans) {
-        //         answerSpan.status = AnswerSpanStatus.OK;
-        //         if (answerSpan.sentenceIndex === -1) {
-        //             if ((!answerSpan.notPresent) && (!answerSpan.notMention)) {
-        //                 answerSpan.status = AnswerSpanStatus.NOT_SELECTED;
-        //             }
-        //         } else {
-        //             if (! this.answerSpanIsPreceding(answerSpan)) {
-        //                 answerSpan.status = AnswerSpanStatus.NOT_PRECEDING;
-        //             } else if (! this.answerSpanIsCandidate(answerSpan)) {
-        //                 answerSpan.status = AnswerSpanStatus.NOT_CANDIDATE;
-        //             }
-        //         }
-        //     }
-        //     return ! _.some(
-        //         this.attributes.answerSpans,
-        //         function(span) { return span.status !== AnswerSpanStatus.OK });
-        // },
-
         // For this version: use the span_list[-1]
         validateAnswerSpans: function() {
             for (var answerSpan of this.attributes.answerSpans) {
@@ -401,8 +304,15 @@
                 } else {
                     if (! this.answerSpanIsPreceding(answerSpan)) {
                         answerSpan.status = AnswerSpanStatus.NOT_PRECEDING;
+
+                        var startToken = answerSpan.span_list[answerSpanIndex].startToken;
+                        var endToken = answerSpan.span_list[answerSpanIndex].endToken;
+                        if (startToken===0 && endToken===1) {
+                            answerSpan.status = AnswerSpanStatus.OK;
+                        }
                     } else if (! this.answerSpanIsCandidate(answerSpan)) {
                         answerSpan.status = AnswerSpanStatus.NOT_CANDIDATE;
+                        answerSpan.status = AnswerSpanStatus.OK;
                     }
                 }
             }
@@ -412,13 +322,20 @@
         },
         toggleNotPresent: function(answerIndex) {
             this.attributes.answerSpans[answerIndex].notPresent = !this.attributes.answerSpans[answerIndex].notPresent;
+            var notPresent = this.attributes.answerSpans[answerIndex].notPresent;
+            if (notPresent) {
+                this.attributes.answerSpans[answerIndex].notMention = false;
+            }
             return this.attributes.answerSpans[answerIndex].notPresent;
         },
         toggleNotMention: function(answerIndex) {
             this.attributes.answerSpans[answerIndex].notMention = !this.attributes.answerSpans[answerIndex].notMention;
+            var notMention = this.attributes.answerSpans[answerIndex].notMention;
+            if (notMention) {
+                this.attributes.answerSpans[answerIndex].notPresent = false;
+            }
             return this.attributes.answerSpans[answerIndex].notMention;
         },
-
         setDrag: function(startSentence, startToken, lastSentence, lastToken) {
             this.attributes.dragStartSentence = startSentence;
             this.attributes.dragStartToken = startToken;
@@ -429,14 +346,6 @@
             this.attributes.dragLastSentence = lastSentence;
             this.attributes.dragLastToken = lastToken;
         },
-        // // Choose from the query span
-        // getRelevantCandidateSpans: function(answerIndex) {
-        //     var answerSpan = this.attributes.answerSpans[answerIndex];
-        //     return _.filter(this.attributes.clickSpans, function(clickSpan) {
-        //         return (spanOverlaps(clickSpan, answerSpan) &&
-        //             spanPrecedes(clickSpan, answerSpan.querySpan));
-        //     });
-        // },
         getRelevantCandidateSpans: function(answerIndex) {
             var answerSpan = this.attributes.answerSpans[answerIndex];
             var answerSpanIndex = answerSpan.currentAnswerIndex;
@@ -445,14 +354,6 @@
                     spanPrecedes(clickSpan, answerSpan.querySpan));
             });
         },
-        // // Use all query spans to construct candidate spans
-        // getRelevantCandidateSpans: function(answerIndex) {
-        //     var answerSpan = this.attributes.answerSpans[answerIndex];
-        //     return _.filter(this.attributes.candidateSpans, function(candidateSpan) {
-        //         return (spanOverlaps(candidateSpan, answerSpan) &&
-        //             spanPrecedes(candidateSpan, answerSpan.querySpan));
-        //     });
-        // },
         setActiveQueryIndex: function(activeQueryIndex) {
             this.attributes.activeQueryIndex = activeQueryIndex;
             this.attributes.scrollToQuery = true;
@@ -548,33 +449,18 @@
             'click button.next_answer': 'nextAnswer',
             'click button.cancel_answer': 'cancelAnswer',
         },
-        // selectCandidateByKey: function(key) {
-        //     var keyInt = parseInt(key);
-        //     if (key == 'n') {
-        //         this.selectCandidate(-1, -1);
-        //     } else if (key == 'p') {
-        //         this.selectCandidate(-2, -2);
-        //     } else if (!isNaN(keyInt) && 0 < keyInt && keyInt < 10) {
-        //         var button = this.$('button').filter(function() {
-        //             return $(this).data('index') == keyInt
-        //         });
-        //         if (button !== undefined) {
-        //             var startToken = button.data('start_token');
-        //             var endToken = button.data('end_token');
-        //             this.selectCandidate(startToken, endToken);
-        //         }
-        //     }
-        // },
         selectCandidateByKey: function(key) {
             var keyInt = parseInt(key);
             if (key == 'q') {
                 this.selectCandidate(-1, -1);
             } else if (key == 'w') {
                 this.selectCandidate(-2, -2);
-            } else if ('slprhab'.split('').includes(key)) {
-                // console.log("Start Select Character by Key");
-                // console.log(key);
-                this.selectCharacter(key);
+            } else if (key == 'k') {
+                this.selectCurrentCharacter();
+            } else if (key == 'j') {
+                this.selectPreviousCharacter();
+            } else if (key == 'l') {
+                this.selectNextCharacter();
             } else if (!isNaN(keyInt) && 0 < keyInt && keyInt < 10) {
                 var button = this.$('button').filter(function() {
                     return $(this).data('index') == keyInt
@@ -586,7 +472,6 @@
                 }
             }
         },
-
         selectCandidate: function(startToken, endToken) {
             var activeQueryIndex = this.model.attributes.activeQueryIndex;
             var answerSpanIndex = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
@@ -611,7 +496,6 @@
             }
             this.model.trigger('change');
         },
-
         selectNextAnswer: function(startToken, endToken) {
             var activeQueryIndex = this.model.attributes.activeQueryIndex;
             var lastAnswerIndex = this.model.attributes.answerSpans[activeQueryIndex].span_list.length - 1;
@@ -650,61 +534,67 @@
             }
             this.model.trigger('change');
         },
-
-        selectCharacter: function(characterShort) {
+        selectCurrentCharacter: function() {
             var activeQueryIndex = this.model.attributes.activeQueryIndex;
             var answerSpanIndex = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
             var sentenceIndex = this.model.attributes.querySpans[activeQueryIndex].sentenceIndex;
 
-            // Define Character Name
-            if (characterShort == 's') {
-                var character = "Sheldon";
-            } else if (characterShort == 'l') {
-                var character = "Leonard";
-            } else if (characterShort == 'l') {
-                var character = "Leonard";
-            } else if (characterShort == 'p') {
-                var character = "Penny";
-            } else if (characterShort == 'r') {
-                var character = "Raj";
-            } else if (characterShort == 'h') {
-                var character = "Howard";
-            } else if (characterShort == 'a') {
-                var character = "Amy";
-            } else if (characterShort == 'b') {
-                var character = "Bernadette";
-            }
-
-            // Iterate characters from current sentence to the start sentence
-            console.log("Start the Loop");
-            for (var i = 0; i <= sentenceIndex; i++) {
-                console.log("Looping Index:" + i);
-                var currentSentence = this.model.attributes.sentences[sentenceIndex - i];
-                if (currentSentence.length < 1) {
-                    // If the sentence is null, then pass
-                    continue;
-                } else {
-                    var CharacterToIterate = currentSentence[0];
-                    console.log(character, CharacterToIterate);
-                    // Check whether the character is target
-                    if (character == CharacterToIterate) {
-                        console.log("Find the target");
-                        console.log(character, CharacterToIterate);
-                        console.log(answerSpanIndex);
-                        console.log(sentenceIndex);
-                        // If character is the target, enter the character
-                        this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
-                        this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
-                        this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex - i;
-
-                        this.model.trigger('change');
-                        break;
-                    }
-                }
-
-            }
+            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
+            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
+            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex;
+            this.model.trigger("change");
         },
+        selectPreviousCharacter: function() {
+            console.log("Go to Previous Character");
+            var activeQueryIndex = this.model.attributes.activeQueryIndex;
+            var answerSpanIndex = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
 
+            var querySentenceIndex = this.model.attributes.querySpans[activeQueryIndex].sentenceIndex;
+            var answerSentenceIndex = this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex;
+            var answerStartToken = this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken;
+            var answerEndToken = this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken;
+            var sentenceIndex;
+
+            // If no mention is selected as answer, pick the speaker of previous utterance
+            if (answerSentenceIndex===-1 && answerStartToken===-1 && answerEndToken===-1) {
+                sentenceIndex = Math.max(querySentenceIndex-1, 0);
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex;
+            } else {
+                sentenceIndex = Math.max(answerSentenceIndex-1, 0);
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex;
+            }
+            this.model.trigger("change");
+        },
+        selectNextCharacter: function() {
+            console.log("Go to Previous Character");
+            var activeQueryIndex = this.model.attributes.activeQueryIndex;
+            var answerSpanIndex = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
+            var sentenceLength = this.model.attributes.sentences.length - 1;
+
+            var querySentenceIndex = this.model.attributes.querySpans[activeQueryIndex].sentenceIndex;
+            var answerSentenceIndex = this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex;
+            var answerStartToken = this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken;
+            var answerEndToken = this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken;
+            var sentenceIndex;
+
+            // If no mention is selected as answer, pick the speaker of previous utterance
+            if (answerSentenceIndex===-1 && answerStartToken===-1 && answerEndToken===-1) {
+                sentenceIndex = Math.min(querySentenceIndex+1, sentenceLength);
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex;
+            } else {
+                sentenceIndex = Math.min(answerSentenceIndex+1, sentenceLength);
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex;
+            }
+            this.model.trigger("change");
+        },
         onClick: function(event) {
             var startToken = $(event.currentTarget).data('start_token');
             var endToken = $(event.currentTarget).data('end_token');
@@ -720,57 +610,53 @@
             var endToken = $(event.currentTarget).data('end_token');
             this.selectCancelAnswer(startToken, endToken);
         },
-        // nextAnswer: function(event) {
-        //     var startToken = $(event.currentTarget).data('start_token');
-        //     var endToken = $(event.currentTarget).data('end_token');
-        //     var activeQueryIndex = this.model.attributes.activeQueryIndex;
-
-        //     var lastAnswerIndex = this.model.attributes.answerSpans[activeQueryIndex].span_list.length - 1;
-        //     var lastAnswer = this.model.attributes.answerSpans[activeQueryIndex].span_list[lastAnswerIndex];
-
-        //     if ((lastAnswer.sentenceIndex==-1) && (lastAnswer.startToken==-1) && (lastAnswer.endToken==-1)) {
-        //         this.model.trigger('change');
-        //     } else {
-        //         // Create a new element in span_list
-        //         this.model.attributes.answerSpans[activeQueryIndex].span_list.push({sentenceIndex: -1,startToken: -1,endToken: -1});
-        //         // Increase the current Answer Index
-        //         this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex += 1;
-        //         this.model.trigger('change');
-        //     }
-        // },
-        // cancelAnswer: function(event) {
-        //     var startToken = $(event.currentTarget).data('start_token');
-        //     var endToken = $(event.currentTarget).data('end_token');
-        //     var activeQueryIndex = this.model.attributes.activeQueryIndex;
-
-        //     if (this.model.attributes.answerSpans[activeQueryIndex].span_list.length==1) {
-        //         // If length of span list == 1, make the list as initialization
-        //         this.model.attributes.answerSpans[activeQueryIndex].span_list = [{sentenceIndex: -1, startToken: -1, endToken: -1}];
-        //         this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex = 0;
-        //     } else {
-        //         // If length of span list >= 2, pop
-        //         var temp = this.model.attributes.answerSpans[activeQueryIndex].span_list;
-        //         var temp_pop = temp.pop();
-        //         var temp_answer_index = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
-        //         var currentAnswerIndex = temp_answer_index - 1;
-        //         console.log("Start Pop");
-        //         console.log(temp);
-        //         console.log(temp_answer_index);
-        //         this.model.attributes.answerSpans[activeQueryIndex].span_list = temp;
-        //         this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex = currentAnswerIndex;
-        //         console.log(this.model.attributes.answerSpans[activeQueryIndex].span_list);
-        //         console.log(this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex);
-        //     }
-        //     this.model.trigger('change');
-        // },
         render: function() {
             this.$el.empty();
-
-            this.$el.append($('<h5>').text('Overlapping Candidates'));
 
             var activeQueryIndex = this.model.attributes.activeQueryIndex;
             var activeQuerySpan = this.model.attributes.answerSpans[activeQueryIndex];
             var index = 1;
+
+            this.$el.append($('<h5>').text('Plural Entities'));
+            this.$el.append($('<button>')
+                .addClass('btn text-start next_answer next_answer_button')
+                .addClass(nextAnswerClass)
+                .attr('type', 'button')
+                .data('start_token', -2)
+                .data('end_token', -2)
+                .data('index', -1)
+                .text(nextAnswerButtonText));
+            this.$el.append($('<button>')
+                .addClass('btn text-start cancel_answer cancel_answer_button')
+                .addClass(cancelAnswerClass)
+                .attr('type', 'button')
+                .data('start_token', -2)
+                .data('end_token', -2)
+                .data('index', -1)
+                .text(cancelAnswerButtonText));
+
+            this.$el.append($('<h5>').text('No answer reason'));
+            this.$el.append($('<button>')
+                .addClass('btn text-start clickable answer_not_present_button')
+                .addClass(notPresentClass)
+                .addClass(activeQuerySpan.notPresent ? 'active' : '')
+                .attr('type', 'button')
+                .data('start_token', -1)
+                .data('end_token', -1)
+                .data('index', -1)
+                .text(notPresentButtonText));
+
+            this.$el.append($('<button>')
+                .addClass('btn text-start clickable answer_not_mention_button')
+                .addClass(notMentionClass)
+                .addClass(activeQuerySpan.notMention ? 'active' : '')
+                .attr('type', 'button')
+                .data('start_token', -2)
+                .data('end_token', -2)
+                .data('index', -1)
+                .text(notMentionButtonText));
+
+            this.$el.append($('<h5>').text('Overlapping Candidates'));
             if (activeQuerySpan.status === AnswerSpanStatus.NOT_SELECTED) {
                 this.$el.append($('<div>')
                     .addClass('alert alert-warning')
@@ -807,46 +693,6 @@
                     }
                 }
             }
-
-            this.$el.append($('<h5>').text('Plural Entities'));
-            this.$el.append($('<button>')
-                .addClass('btn text-start next_answer next_answer_button')
-                .addClass(nextAnswerClass)
-                .attr('type', 'button')
-                .data('start_token', -2)
-                .data('end_token', -2)
-                .data('index', -1)
-                .text(nextAnswerButtonText));
-            this.$el.append($('<button>')
-                .addClass('btn text-start cancel_answer cancel_answer_button')
-                .addClass(cancelAnswerClass)
-                .attr('type', 'button')
-                .data('start_token', -2)
-                .data('end_token', -2)
-                .data('index', -1)
-                .text(cancelAnswerButtonText));
-
-            this.$el.append($('<h5>').text('No answer reason:'));
-            this.$el.append($('<button>')
-                .addClass('btn text-start clickable answer_not_present_button')
-                .addClass(notPresentClass)
-                .addClass(activeQuerySpan.notPresent ? 'active' : '')
-                .attr('type', 'button')
-                .data('start_token', -1)
-                .data('end_token', -1)
-                .data('index', -1)
-                .text(notPresentButtonText));
-
-            this.$el.append($('<button>')
-                .addClass('btn text-start clickable answer_not_mention_button')
-                .addClass(notMentionClass)
-                .addClass(activeQuerySpan.notMention ? 'active' : '')
-                .attr('type', 'button')
-                .data('start_token', -2)
-                .data('end_token', -2)
-                .data('index', -1)
-                .text(notMentionButtonText));
-
             return this;
         }
     });
@@ -952,7 +798,8 @@
             var activeQueryIndex = this.model.get('activeQueryIndex');
             var activeQuerySpan = this.model.attributes.answerSpans[activeQueryIndex];
             var activeQueryIsValid = (activeQuerySpan.status === AnswerSpanStatus.OK);
-            var activeAnswerSpanText = this.model.getAnswerSpanText(activeQueryIndex);
+            // var activeAnswerSpanText = this.model.getAnswerSpanText(activeQueryIndex);
+            var activeAnswerSpanText = this.model.getAllAnswerSpanText(activeQueryIndex);
             var activeQuerySpanText = this.model.getQuerySpanText(activeQueryIndex);
 
             var statusDiv = $('<div>')
@@ -963,12 +810,26 @@
                         ' btn-success' :
                         ' btn-danger'))
                     .text(activeQuerySpanText))
+                .append($('<i>').addClass('me-2 mt-1').text('Answer:'));
+                // .append($('<div>')
+                //     .addClass('btn p-1 me-4 mt-1' + (activeQueryIsValid ? ((activeQuerySpan.notPresent || activeQuerySpan.notMention) ? ' btn-primary' : ' btn-dark') :' btn-dark disabled'))
+                //     .text(activeQueryIsValid ? (activeQuerySpan.notPresent ? notPresentText : (activeQuerySpan.notMention ? notMentionText: activeAnswerSpanText)) : activeAnswerSpanText + ' (Please select a span)'));
 
-                                // Add "Answer:" and the selected answer span
-                                .append($('<i>').addClass('me-2 mt-1').text('Answer:'))
-                .append($('<div>')
-                    .addClass('btn p-1 me-4 mt-1' + (activeQueryIsValid ? ((activeQuerySpan.notPresent || activeQuerySpan.notMention) ? ' btn-primary' : ' btn-dark') :' btn-dark disabled'))
-                    .text(activeQueryIsValid ? (activeQuerySpan.notPresent ? notPresentText : (activeQuerySpan.notMention ? notMentionText: activeAnswerSpanText)) : activeAnswerSpanText + ' (invalid)'));
+            var answerSpanLength = this.model.attributes.answerSpans[activeQueryIndex].span_list.length;
+            for (var i = 0; i < answerSpanLength-1; i++) {
+                var answerText = this.model.getSpanText(this.model.attributes.answerSpans[activeQueryIndex].span_list[i]);
+                statusDiv.append($('<div>')
+                    .addClass('btn p-1 me-4 mt-1' + ((activeQuerySpan.notPresent || activeQuerySpan.notMention) ? ' btn-primary' : ' btn-dark'))
+                    .text(activeQuerySpan.notPresent ? notPresentText : (activeQuerySpan.notMention ? notMentionText: answerText)));
+                    // .text(activeQueryIsValid ? (activeQuerySpan.notPresent ? notPresentText : (activeQuerySpan.notMention ? notMentionText: answerText)) : answerText + ' (Please select a span)'));
+            }
+            // For the last answerSpan
+            var answerText = this.model.getSpanText(this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanLength-1]);
+            statusDiv.append($('<div>')
+                .addClass('btn p-1 me-4 mt-1' + (activeQueryIsValid ? ((activeQuerySpan.notPresent || activeQuerySpan.notMention) ? ' btn-primary' : ' btn-dark') :' btn-dark disabled'))
+                .text(activeQueryIsValid ? (activeQuerySpan.notPresent ? notPresentText : (activeQuerySpan.notMention ? notMentionText: answerText)) : answerText + ' (Please select a span)'));
+
+
 
             var queriesDiv = $('<div>')
                 .addClass('d-flex justify-content-between')
@@ -1095,10 +956,7 @@
                         // Former Answer Span
                         if (this.model.isPartOfOtherAnswerSpan(activeQueryIndex, si, ti)) {
                             tokenSpan.addClass(activeQuerySpanClass);
-                            tokenSpan.addClass('disabled');
-                            // if (! activeQueryIsValid) {
-                            //     tokenSpan.addClass('disabled');
-                            // }
+                            // tokenSpan.addClass('disabled');
                         }
                         // For the speaker button
                         if(ti===0){
@@ -1116,10 +974,7 @@
                             .text(' ');
                         paragraph.append(whitespaceSpan);
                     }
-
-                    paragraph.append($('<p>'))
-
-
+                    paragraph.append($('<p>'));
                 }
             }
             textDiv.append(paragraph);
@@ -1127,9 +982,9 @@
 
             if (this.model.attributes.scrollToQuery && activeQueryElement !== null) {
                 this.model.attributes.scrollToQuery = false;
-                activeQueryElement[0].scrollIntoView(false);
+                activeQueryElement[0].scrollIntoView({block: "center"});
+                // activeQueryElement[0].scrollIntoView(false);
             }
-
             return this;
         }
     });
@@ -1172,7 +1027,7 @@
                 } else if ('123456789qw'.split('').includes(key)) {
                     event.preventDefault();
                     this.candidateListView.selectCandidateByKey(key);
-                } else if ('slprhab'.split('').includes(key)) {
+                } else if ('jkl'.split('').includes(key)) {
                     event.preventDefault();
                     this.candidateListView.selectCandidateByKey(key);
                 }
@@ -1195,13 +1050,8 @@
         render: function() {
             $('#alerts').removeClass();
             $('#alerts').empty();
-            // console.log("Original Data Model:");
-            // console.log(this.model);
 
             this.model.validateAnswerSpans();
-            // console.log("New Data Model:");
-            // console.log(this.model);
-
             this.sentenceView.render();
             this.candidateListView.render();
         },
@@ -1371,7 +1221,7 @@
         </div>
 
         <div class="card card-body">
-            <h5 class="card-title">If there is no previous mention of the entity, select <span class="btn btn-outline-primary p-1">no previous mention</span>.</h5>
+            <h5 class="card-title">If there is no previous mention of the entity, select <span class="btn btn-outline-primary p-1">(q) No previous mention</span>.</h5>
             <p>For example:</p>
             <p class="example_sentence">
                 <span class="btn btn-outline-primary p-1">Leonard</span>:Hi, I am Leonard. This is Sheldon.
@@ -1383,13 +1233,15 @@
                 <span class="btn btn-outline-primary p-1">Leonard</span>: We are here to pick up <span class="btn token btn-danger font-weight-bold">Penny's</span>  <span class="btn token btn-danger font-weight-bold">TV</span>.
             </p>
             <p>
-                We would ask you to click <span class="btn btn-outline-primary p-1">No previous mention</span> as there is no previous mention of Penny's TV.
+                We would ask you to click <span class="btn btn-outline-primary p-1">(q) No previous mention</span> as there is no previous mention of Penny's TV.
             </p>
-
+            <p>
+                You could also do this by pressing "q" on your keyboard shortcut.
+            </p>
         </div>
 
         <div class="card card-body">
-            <h5 class="card-title">If the selected span does not refer to an entity (a person, place, or thing), please select <span class="btn btn-outline-primary p-1">Not mention</span>.</h5>
+            <h5 class="card-title">If the selected span does not refer to an entity (a person, place, or thing), please select <span class="btn btn-outline-primary p-1">(w) Not mention</span>.</h5>
             <p>For example:</p>
             <p class="example_sentence">
                 <span class="btn btn-outline-primary p-1">Leonard</span>:Hi, I am Leonard. This is Sheldon.
@@ -1401,12 +1253,46 @@
                 <span class="btn btn-outline-primary p-1">Leonard</span>: We are here to <span class="btn token btn-danger font-weight-bold">pick</span> <span class="btn token btn-danger font-weight-bold">up</span> Penny's TV.
             </p>
             <p>
-                We would ask you to click <span class="btn btn-outline-primary p-1">not mention</span> since the selected span does not refer to an entity.
+                We would ask you to click <span class="btn btn-outline-primary p-1">(w) Not mention</span> since the selected span does not refer to an entity.
+            </p>
+            <p>
+                You could also do this by pressing "w" on your keyboard shortcut.
             </p>
         </div>
 
         <div class="card card-body">
             <h5 class="card-title">If the selected mention is a plural (refer to multiple <em>different</em> entities), please select different mentions.</h5>
+            <p>For example:</p>
+            <p>
+                The highlighted entity mention in the last sentence is a plural mention "We". We would ask you to select mention of each <em>different</em> entity it corefer to. You need select both <span class="btn btn-outline-primary p-1">Sheldon</span> and  <span class="btn btn-outline-primary p-1">Leonard</span>. Now you have select the mention <span class="btn btn-outline-primary p-1">Leonard</span>.
+            </p>
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Leonard</span>:Hi, I am Leonard. This is Sheldon.
+            </p>
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Sheldon</span>: Hello.
+            </p>
+            <p class="example_sentence">
+                <span class="btn token btn-dark">Leonard</span>: <span class="btn token btn-success font-weight-bold">We</span> are here to pick up Penny's TV.
+            </p>
+            <p>
+                To select plural, you need click the <span class="btn btn-outline-primary p-1">(n) Add span</span> button. Then, the selected mention will be stored and you can select the next mention.
+            </p>
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Leonard</span>:Hi, I am Leonard. This is Sheldon.
+            </p>
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Sheldon</span>: Hello.
+            </p>
+            <p class="example_sentence">
+                <span class="btn token btn-dark">Leonard</span>: <span class="btn token btn-danger font-weight-bold">We</span> are here to pick up Penny's TV.
+            </p>
+        </div>
+
+
+        <div class="card card-body">
+            <h5 class="card-title">Keyboard Short Cuts to select speaker.</h5>
+            <p>You can press "k" on your keyboard shortcut to select the speaker of the current utterance. You could select the speaker in previous utterance by pressing "j" in keyboard and speaker in next utterance by pressing "l" in keyboard.</p>
             <p>For example:</p>
             <p class="example_sentence">
                 <span class="btn btn-outline-primary p-1">Leonard</span>:Hi, I am Leonard. This is Sheldon.
@@ -1415,23 +1301,13 @@
                 <span class="btn btn-outline-primary p-1">Sheldon</span>: Hello.
             </p>
             <p class="example_sentence">
-                <span class="btn btn-outline-primary p-1">Leonard</span>: <span class="btn token btn-danger font-weight-bold">We</span> are here to pick up Penny's TV.
-            </p>
-
-            <p>
-                The highlighted entity mention in the last sentence is a plural mention "We". We would ask you to select mention of each <em>different</em> entity it corefer to.
-            </p>
-
-            <p class="example_sentence">
-                <span class="btn btn-outline-primary p-1">Leonard</span>:Hi, I am Leonard. This is Sheldon.
+                <span class="btn token btn-dark">Leonard</span>: <span class="btn token btn-success font-weight-bold">I</span> am here to pick up Penny's TV.
             </p>
             <p class="example_sentence">
-                <span class="btn token btn-dark">Sheldon</span>: Hello.
-            </p>
-            <p class="example_sentence">
-                <span class="btn token btn-dark">Leonard</span>: <span class="btn token btn-success font-weight-bold">We</span> are here to pick up Penny's TV.
+                <span class="btn btn-outline-primary p-1">Sheldon</span>: Yeah.
             </p>
         </div>
+
 
         <p class="pt-3">
             In these simplified examples, we have highlighted one entity mention at a time and asked for previous mention of that entity.  In general, we will select multiple entity mentions across the document (called <em>query mentions</em>) and ask for a preceding mention for each one.  We will display the list of query mentions above the text; the active query mention will be highlighted in the text and bolded in the list above.  Dragging over text will select the immediately previous mention for the active query mention only; a different query mention may be activated by clicking on it in the list of query mentions, by using the provided "next query" and "previous query" buttons, or by pressing "Tab" or "Shift" + "Tab" on your keyboard.
@@ -1616,6 +1492,18 @@
                             <td>Go to previous query mention</td>
                         </tr>
                         <tr>
+                            <td><span class="btn btn-light p-1 border">j</span></td>
+                            <td>Select previous speaker</td>
+                        </tr>
+                        <tr>
+                            <td><span class="btn btn-light p-1 border">k</span></td>
+                            <td>Select current speaker</td>
+                        </tr>
+                        <tr>
+                            <td><span class="btn btn-light p-1 border">l</span></td>
+                            <td>Select next speaker</td>
+                        </tr>
+                        <tr>
                             <td><span class="btn btn-light p-1 border">&rightarrow;</span></td>
                             <td>Select next word in text</td>
                         </tr>
@@ -1630,45 +1518,6 @@
                         <tr>
                             <td><span class="btn btn-light p-1 border">?</span></td>
                             <td>Show/hide keyboard shortcuts</td>
-                        </tr>
-
-                        <tr>
-                            <td>Character Short Cut</td>
-                        </tr>
-
-                        <tr>
-                            <td><span class="btn btn-light p-1 border">s</span></td>
-                            <td>Sheldon</td>
-                        </tr>
-
-                        <tr>
-                            <td><span class="btn btn-light p-1 border">l</span></td>
-                            <td>Leonard</td>
-                        </tr>
-
-                        <tr>
-                            <td><span class="btn btn-light p-1 border">p</span></td>
-                            <td>Penny</td>
-                        </tr>
-
-                        <tr>
-                            <td><span class="btn btn-light p-1 border">r</span></td>
-                            <td>Raj</td>
-                        </tr>
-
-                        <tr>
-                            <td><span class="btn btn-light p-1 border">h</span></td>
-                            <td>Howard</td>
-                        </tr>
-
-                        <tr>
-                            <td><span class="btn btn-light p-1 border">a</span></td>
-                            <td>Amy</td>
-                        </tr>
-
-                        <tr>
-                            <td><span class="btn btn-light p-1 border">b</span></td>
-                            <td>Bernadette</td>
                         </tr>
 
                     </table>
