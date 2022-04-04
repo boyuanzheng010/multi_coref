@@ -150,17 +150,6 @@
             sentenceNumber: 0
         },
         initialize: function() {
-            // for (var query of this.attributes.querySpans) {
-            //     this.attributes.answerSpans.push({
-            //         querySpan: query,
-            //         notPresent: false,
-            //         notMention: false,
-            //         sentenceIndex: -1,
-            //         startToken: -1,
-            //         endToken: -1,
-            //         status: AnswerSpanStatus.OK
-            //     });
-            // }
             for (var query of this.attributes.querySpans) {
                 this.attributes.answerSpans.push({
                     querySpan: query,
@@ -187,22 +176,7 @@
                 function(span) { return span.sentenceIndex * maxLength * maxLength +
                                         span.startToken * maxLength +
                                         span.endToken; });
-
-            // Add the maximum sentence length
-
         },
-        // clearAnswerSpan: function(answerIndex) {
-        //     this.attributes.answerSpans[answerIndex].sentenceIndex = -1;
-        //     this.attributes.answerSpans[answerIndex].startToken = -1;
-        //     this.attributes.answerSpans[answerIndex].endToken = -1;
-        // },
-        // clearAnswerSpan: function(answerIndex) {
-        //     this.attributes.answerSpans[answerIndex].span_list = [{
-        //         sentenceIndex : -1,
-        //         startToken : -1,
-        //         endToken : -1
-        //     }];
-        // },
         clearAllAnswerSpan: function(answerIndex) {
             this.attributes.answerSpans[answerIndex].span_list = [{
                 sentenceIndex : -1,
@@ -211,36 +185,6 @@
             }];
             this.attributes.answerSpans[answerIndex].currentAnswerIndex = 0;
         },
-
-        // clearSingleAnswerSpan: function(answerIndex, tokenIndex) {
-        //     answerSpanLength = this.attributes.answerSpans[answerIndex].span_list.length;
-        //     for (var i = 0; i < answerSpanLength-1; i++) {
-        //         if ((this.attributes.answerSpans[answerIndex].span_list[i].startToken <= tokenIndex) && (this.attributes.answerSpans[answerIndex].span_list[i].endToken >= tokenIndex)) {
-        //             this.attributes.answerSpans[answerIndex].span_list[answerSpanLength-1] = {
-        //                 sentenceIndex : -1,
-        //                 startToken : -1,
-        //                 endToken : -1
-        //             }
-        //         }
-        //     }
-        // },
-
-        // clearSingleAnswerSpan: function(answerIndex, tokenIndex) {
-        //     answerSpanLength = this.attributes.answerSpans[answerIndex].span_list.length;
-        //     for (var i = 0; i < answerSpanLength-1; i++) {
-        //         if ((this.attributes.answerSpans[answerIndex].span_list[i].startToken <= tokenIndex)
-        //         && (this.attributes.answerSpans[answerIndex].span_list[i].endToken >= tokenIndex)
-        //         && (this.attributes.answerSpans[answerIndex].currentAnswerIndex==i)) {
-        //             this.attributes.answerSpans[answerIndex].span_list[i] = {
-        //                 sentenceIndex : -1,
-        //                 startToken : -1,
-        //                 endToken : -1
-        //             }
-        //         }
-        //     }
-        //     this.trigger('change');
-        // },
-
         clearSingleAnswerSpan: function(answerIndex, tokenIndex) {
             var answerSpanIndex = this.attributes.answerSpans[answerIndex].currentAnswerIndex;
             this.attributes.answerSpans[answerIndex].span_list[answerSpanIndex] = {sentenceIndex : -1, startToken : -1, endToken : -1};
@@ -276,12 +220,6 @@
         },
         getAnswerSpanText: function(answerIndex) {
             var answerSpanIndex = this.attributes.answerSpans[answerIndex].currentAnswerIndex;
-            // console.log("Start Get Answer Span Text:");
-            // console.log(answerSpanIndex);
-            // console.log(this.attributes.answerSpans[answerIndex].span_list);
-            // console.log(this.attributes.answerSpans[answerIndex].span_list[answerSpanIndex]);
-            // console.log(this.getSpanText(this.attributes.answerSpans[answerIndex].span_list[answerSpanIndex]));
-            // console.log("End Get Answer Span Text");
             return this.getSpanText(this.attributes.answerSpans[answerIndex].span_list[answerSpanIndex]);
         },
         getAllAnswerSpanText: function(answerIndex) {
@@ -296,10 +234,6 @@
         },
         isPartOfAnswerSpan: function(answerIndex, si, ti) {
             var answerSpanIndex = this.attributes.answerSpans[answerIndex].currentAnswerIndex;
-            // console.log("Current Answer Span Index:");
-            // console.log(answerSpanIndex = this.attributes.answerSpans[answerIndex].currentAnswerIndex);
-            // console.log(this.attributes.answerSpans[answerIndex].span_list[answerSpanIndex])
-            // console.log("---")
             return spanContainsToken(this.attributes.answerSpans[answerIndex].span_list[answerSpanIndex], si, ti);
         },
         isPartOfAnyAnswerSpan: function(answerIndex, si, ti) {
@@ -394,7 +328,6 @@
             this.attributes.answerSpans[answerIndex].notMention = !this.attributes.answerSpans[answerIndex].notMention;
             return this.attributes.answerSpans[answerIndex].notMention;
         },
-
         setDrag: function(startSentence, startToken, lastSentence, lastToken) {
             this.attributes.dragStartSentence = startSentence;
             this.attributes.dragStartToken = startToken;
@@ -531,7 +464,6 @@
                 }
             }
         },
-
         selectCandidate: function(startToken, endToken) {
             var activeQueryIndex = this.model.attributes.activeQueryIndex;
             var answerSpanIndex = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
@@ -556,7 +488,6 @@
             }
             this.model.trigger('change');
         },
-
         selectNextAnswer: function(startToken, endToken) {
             var activeQueryIndex = this.model.attributes.activeQueryIndex;
             var lastAnswerIndex = this.model.attributes.answerSpans[activeQueryIndex].span_list.length - 1;
@@ -605,7 +536,6 @@
             this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex;
             this.model.trigger("change");
         },
-
         selectPreviousCharacter: function() {
             console.log("Go to Previous Character");
             var activeQueryIndex = this.model.attributes.activeQueryIndex;
@@ -631,7 +561,6 @@
             }
             this.model.trigger("change");
         },
-
         selectNextCharacter: function() {
             console.log("Go to Previous Character");
             var activeQueryIndex = this.model.attributes.activeQueryIndex;
@@ -658,7 +587,6 @@
             }
             this.model.trigger("change");
         },
-
         onClick: function(event) {
             var startToken = $(event.currentTarget).data('start_token');
             var endToken = $(event.currentTarget).data('end_token');
@@ -757,9 +685,7 @@
                     }
                 }
             }
-
             return this;
-
         }
     });
 
