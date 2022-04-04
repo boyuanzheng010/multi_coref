@@ -3,6 +3,13 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="/annotation_result/data/results.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/coref_annotation_interface/current_sample_data.csv">
           <value>
             <Attribute>
@@ -53,6 +60,20 @@
           </value>
         </entry>
         <entry key="/tbbt/parallel_corpus/sample_annotate.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/tbbt/parallel_corpus/sample_annotate_epi_1_8.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/tbbt/parallel_corpus/sample_annotate_epi_1_8_new.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
