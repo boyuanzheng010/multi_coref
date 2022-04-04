@@ -367,10 +367,6 @@
             answerSpan.notPresent = false;
             answerSpan.notMention = false;
         },
-        // answerSpanIsPreceding: function(answerSpan) {
-        //     return spanPrecedes(answerSpan, answerSpan.querySpan);
-        // },
-
         // Currently, use the first element in span_list
         answerSpanIsPreceding: function(answerSpan) {
             var answerSpanIndex = answerSpan.currentAnswerIndex;
@@ -385,33 +381,6 @@
                     return spanEquals(answerSpan.span_list[answerSpanIndex], candidateSpan);
                 });
         },
-        // answerSpanIsCandidate: function(answerSpan) {
-        //     return _.some(
-        //         this.attributes.candidateSpans,
-        //         function(candidateSpan) {
-        //             return spanEquals(answerSpan, candidateSpan);
-        //         });
-        // },
-        // validateAnswerSpans: function() {
-        //     for (var answerSpan of this.attributes.answerSpans) {
-        //         answerSpan.status = AnswerSpanStatus.OK;
-        //         if (answerSpan.sentenceIndex === -1) {
-        //             if ((!answerSpan.notPresent) && (!answerSpan.notMention)) {
-        //                 answerSpan.status = AnswerSpanStatus.NOT_SELECTED;
-        //             }
-        //         } else {
-        //             if (! this.answerSpanIsPreceding(answerSpan)) {
-        //                 answerSpan.status = AnswerSpanStatus.NOT_PRECEDING;
-        //             } else if (! this.answerSpanIsCandidate(answerSpan)) {
-        //                 answerSpan.status = AnswerSpanStatus.NOT_CANDIDATE;
-        //             }
-        //         }
-        //     }
-        //     return ! _.some(
-        //         this.attributes.answerSpans,
-        //         function(span) { return span.status !== AnswerSpanStatus.OK });
-        // },
-
         // For this version: use the span_list[-1]
         validateAnswerSpans: function() {
             for (var answerSpan of this.attributes.answerSpans) {
@@ -424,6 +393,12 @@
                 } else {
                     if (! this.answerSpanIsPreceding(answerSpan)) {
                         answerSpan.status = AnswerSpanStatus.NOT_PRECEDING;
+
+                        var startToken = answerSpan.span_list[answerSpanIndex].startToken;
+                        var endToken = answerSpan.span_list[answerSpanIndex].endToken;
+                        if (startToken===0 && endToken===1) {
+                            answerSpan.status = AnswerSpanStatus.OK;
+                        }
                     } else if (! this.answerSpanIsCandidate(answerSpan)) {
                         answerSpan.status = AnswerSpanStatus.NOT_CANDIDATE;
                     }
@@ -452,14 +427,6 @@
             this.attributes.dragLastSentence = lastSentence;
             this.attributes.dragLastToken = lastToken;
         },
-        // // Choose from the query span
-        // getRelevantCandidateSpans: function(answerIndex) {
-        //     var answerSpan = this.attributes.answerSpans[answerIndex];
-        //     return _.filter(this.attributes.clickSpans, function(clickSpan) {
-        //         return (spanOverlaps(clickSpan, answerSpan) &&
-        //             spanPrecedes(clickSpan, answerSpan.querySpan));
-        //     });
-        // },
         getRelevantCandidateSpans: function(answerIndex) {
             var answerSpan = this.attributes.answerSpans[answerIndex];
             var answerSpanIndex = answerSpan.currentAnswerIndex;
@@ -468,14 +435,6 @@
                     spanPrecedes(clickSpan, answerSpan.querySpan));
             });
         },
-        // // Use all query spans to construct candidate spans
-        // getRelevantCandidateSpans: function(answerIndex) {
-        //     var answerSpan = this.attributes.answerSpans[answerIndex];
-        //     return _.filter(this.attributes.candidateSpans, function(candidateSpan) {
-        //         return (spanOverlaps(candidateSpan, answerSpan) &&
-        //             spanPrecedes(candidateSpan, answerSpan.querySpan));
-        //     });
-        // },
         setActiveQueryIndex: function(activeQueryIndex) {
             this.attributes.activeQueryIndex = activeQueryIndex;
             this.attributes.scrollToQuery = true;
@@ -571,23 +530,6 @@
             'click button.next_answer': 'nextAnswer',
             'click button.cancel_answer': 'cancelAnswer',
         },
-        // selectCandidateByKey: function(key) {
-        //     var keyInt = parseInt(key);
-        //     if (key == 'n') {
-        //         this.selectCandidate(-1, -1);
-        //     } else if (key == 'p') {
-        //         this.selectCandidate(-2, -2);
-        //     } else if (!isNaN(keyInt) && 0 < keyInt && keyInt < 10) {
-        //         var button = this.$('button').filter(function() {
-        //             return $(this).data('index') == keyInt
-        //         });
-        //         if (button !== undefined) {
-        //             var startToken = button.data('start_token');
-        //             var endToken = button.data('end_token');
-        //             this.selectCandidate(startToken, endToken);
-        //         }
-        //     }
-        // },
         selectCandidateByKey: function(key) {
             var keyInt = parseInt(key);
             if (key == 'q') {
@@ -758,43 +700,54 @@
             console.log("Go to Previous Character");
             var activeQueryIndex = this.model.attributes.activeQueryIndex;
             var answerSpanIndex = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
-            var sentenceIndex = this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex;
 
-            if (sentenceIndex == -1) {
-                sentenceIndex = this.model.attributes.querySpans[activeQueryIndex].sentenceIndex - 1;
-            }
+            var querySentenceIndex = this.model.attributes.querySpans[activeQueryIndex].sentenceIndex;
+            var answerSentenceIndex = this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex;
+            var answerStartToken = this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken;
+            var answerEndToken = this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken;
+            var sentenceIndex;
 
-            if (sentenceIndex == 0 || sentenceIndex == -1) {
-                sentenceIndex = 1;
+            // If no mention is selected as answer, pick the speaker of previous utterance
+            if (answerSentenceIndex===-1 && answerStartToken===-1 && answerEndToken===-1) {
+                sentenceIndex = Math.max(querySentenceIndex-1, 0);
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex;
+            } else {
+                sentenceIndex = Math.max(answerSentenceIndex-1, 0);
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex;
             }
-            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
-            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
-            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex - 1;
-            console.log(this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex);
             this.model.trigger("change");
         },
 
         selectNextCharacter: function() {
-            console.log("Go to Next Character");
+            console.log("Go to Previous Character");
             var activeQueryIndex = this.model.attributes.activeQueryIndex;
             var answerSpanIndex = this.model.attributes.answerSpans[activeQueryIndex].currentAnswerIndex;
-            var sentenceIndex = this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex;
             var sentenceLength = this.model.attributes.sentences.length - 1;
 
-            if (sentenceIndex == -1) {
-                sentenceIndex = this.model.attributes.querySpans[activeQueryIndex].sentenceIndex + 1;
-            }
+            var querySentenceIndex = this.model.attributes.querySpans[activeQueryIndex].sentenceIndex;
+            var answerSentenceIndex = this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex;
+            var answerStartToken = this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken;
+            var answerEndToken = this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken;
+            var sentenceIndex;
 
-            if (sentenceIndex == sentenceLength) {
-                sentenceIndex = sentenceLength - 1;
+            // If no mention is selected as answer, pick the speaker of previous utterance
+            if (answerSentenceIndex===-1 && answerStartToken===-1 && answerEndToken===-1) {
+                sentenceIndex = Math.min(querySentenceIndex+1, sentenceLength);
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex;
+            } else {
+                sentenceIndex = Math.min(answerSentenceIndex+1, sentenceLength);
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
+                this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex;
             }
-
-            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].startToken = 0;
-            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].endToken = 1;
-            this.model.attributes.answerSpans[activeQueryIndex].span_list[answerSpanIndex].sentenceIndex = sentenceIndex + 1;
             this.model.trigger("change");
         },
-
 
         onClick: function(event) {
             var startToken = $(event.currentTarget).data('start_token');
