@@ -9,7 +9,7 @@ from tqdm import tqdm
 from copy import deepcopy
 
 
-with open('tbbt_en_zh.pkl', 'rb') as f:
+with open('uncleaned_tbbt_en_zh.pkl', 'rb') as f:
     corpus = pkl.load(f)
 
 
