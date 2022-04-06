@@ -147,48 +147,100 @@ Example:
 #
 #     return en_subset, zh_subset, tbbt_episode
 
-def fetch_old_subsets(episode, en_subtitle, zh_subtitle, results, season_id, episode_id, bias):
-    idx_list, gaps = get_epi_indexs_gaps(results[season_id][episode_id])
-    subsets = find_all_continuous_subsets(idx_list, gaps, 6, 100)[-1]
-    # Calculate gaps within the subset
-    gaps_subsets = calculate_gaps(subsets)
+# def fetch_old_subsets(episode, en_subtitle, zh_subtitle, results, season_id, episode_id, bias):
+#     idx_list, gaps = get_epi_indexs_gaps(results[season_id][episode_id])
+#     subsets = find_all_continuous_subsets(idx_list, gaps, 6, 100)[-1]
+#     # Calculate gaps within the subset
+#     gaps_subsets = calculate_gaps(subsets)
+#
+#     # Prepare Subtitle Subset
+#     start = subsets[0] - bias
+#     end = subsets[-1] + bias
+#     en_subset = en_subtitle[start: end]
+#     zh_subset = zh_subtitle[start: end]
+#
+#     # Prepare utterances of one episode
+#     tbbt_episode = []
+#     for item in episode:
+#         if int(item[1:3]) == season_id and int(item[4:6]) == episode_id:
+#             sentences = episode[item]['sentences']
+#             speakers = episode[item]['speakers']
+#             for sentence, speaker in zip(sentences, speakers):
+#                 tbbt_episode.append([sentence, speaker])
+#
+#     # Clean the episode data
+#     # 1. Remove empty string
+#     # 2. Remove duplicate stings
+#     temp_tbbt_episode = []
+#     abandon_idx = set()
+#     for i, x in enumerate(tbbt_episode):
+#         if transformation(x[0]) in [" ", ""]:
+#             abandon_idx.add(i)
+#     for length in range(6):
+#         length += 1
+#         for i in range(len(tbbt_episode)-length):
+#             if tbbt_episode[i][0]==tbbt_episode[i+length][0] and tbbt_episode[i][1]==tbbt_episode[i+length][1]:
+#                 abandon_idx.add(i)
+#
+#     for i, item in enumerate(tbbt_episode):
+#         if i not in abandon_idx:
+#             temp_tbbt_episode.append(item)
+#
+#     return en_subset, zh_subset, temp_tbbt_episode
+#
+#
+#
+#
+# def fetch_subsets(episode, en_subtitle, zh_subtitle, results, season_id, episode_id, bias):
+#     idx_list, gaps = get_epi_indexs_gaps(results[season_id][episode_id])
+#     subsets = find_all_continuous_subsets(idx_list, gaps, 6, 100)[-1]
+#     # Calculate gaps within the subset
+#     gaps_subsets = calculate_gaps(subsets)
+#
+#     # Prepare Subtitle Subset
+#     start = subsets[0] - bias
+#     end = subsets[-1] + bias
+#     en_subset = en_subtitle[start: end]
+#     zh_subset = zh_subtitle[start: end]
+#
+#     # Prepare utterances of one episode
+#     # tbbt_episode = []
+#     # for item in episode:
+#     #     if int(item[1:3]) == season_id and int(item[4:6]) == episode_id:
+#     #         sentences = episode[item]['sentences']
+#     #         speakers = episode[item]['speakers']
+#     #         for sentence, speaker in zip(sentences, speakers):
+#     #             tbbt_episode.append([sentence, speaker])
+#     tbbt_episode = []
+#     for x in episode[(season_id, episode_id)]:
+#         if x[1] != 'Scene':
+#             tbbt_episode.append(x)
+#
+#
+#     # Clean the episode data
+#     # 1. Remove empty string
+#     # 2. Remove duplicate stings
+#     temp_tbbt_episode = []
+#     abandon_idx = set()
+#     for i, x in enumerate(tbbt_episode):
+#         if transformation(x[0]) in [" ", ""]:
+#             abandon_idx.add(i)
+#     for length in range(6):
+#         length += 1
+#         for i in range(len(tbbt_episode)-length):
+#             if tbbt_episode[i][0]==tbbt_episode[i+length][0] and tbbt_episode[i][1]==tbbt_episode[i+length][1]:
+#                 abandon_idx.add(i)
+#
+#     for i, item in enumerate(tbbt_episode):
+#         if i not in abandon_idx:
+#             temp_tbbt_episode.append(item)
+#
+#     return en_subset, zh_subset, temp_tbbt_episode
 
-    # Prepare Subtitle Subset
-    start = subsets[0] - bias
-    end = subsets[-1] + bias
-    en_subset = en_subtitle[start: end]
-    zh_subset = zh_subtitle[start: end]
-
-    # Prepare utterances of one episode
-    tbbt_episode = []
-    for item in episode:
-        if int(item[1:3]) == season_id and int(item[4:6]) == episode_id:
-            sentences = episode[item]['sentences']
-            speakers = episode[item]['speakers']
-            for sentence, speaker in zip(sentences, speakers):
-                tbbt_episode.append([sentence, speaker])
-
-    # Clean the episode data
-    # 1. Remove empty string
-    # 2. Remove duplicate stings
-    temp_tbbt_episode = []
-    abandon_idx = set()
-    for i, x in enumerate(tbbt_episode):
-        if transformation(x[0]) in [" ", ""]:
-            abandon_idx.add(i)
-    for length in range(6):
-        length += 1
-        for i in range(len(tbbt_episode)-length):
-            if tbbt_episode[i][0]==tbbt_episode[i+length][0] and tbbt_episode[i][1]==tbbt_episode[i+length][1]:
-                abandon_idx.add(i)
-
-    for i, item in enumerate(tbbt_episode):
-        if i not in abandon_idx:
-            temp_tbbt_episode.append(item)
-
-    return en_subset, zh_subset, temp_tbbt_episode
-
-
+def clean_sentence_brackets(text):
+    text = text.strip().lstrip('-').lstrip().lstrip('.').lstrip()
+    new_text = re.sub(u"\\(.*?\\)|\\{.*?}|\\[.*?]", "", text)
+    return new_text
 
 
 def fetch_subsets(episode, en_subtitle, zh_subtitle, results, season_id, episode_id, bias):
@@ -200,17 +252,21 @@ def fetch_subsets(episode, en_subtitle, zh_subtitle, results, season_id, episode
     # Prepare Subtitle Subset
     start = subsets[0] - bias
     end = subsets[-1] + bias
-    en_subset = en_subtitle[start: end]
-    zh_subset = zh_subtitle[start: end]
+    old_en_subset = en_subtitle[start: end]
+    old_zh_subset = zh_subtitle[start: end]
+    en_subset = []
+    zh_subset = []
 
-    # Prepare utterances of one episode
-    # tbbt_episode = []
-    # for item in episode:
-    #     if int(item[1:3]) == season_id and int(item[4:6]) == episode_id:
-    #         sentences = episode[item]['sentences']
-    #         speakers = episode[item]['speakers']
-    #         for sentence, speaker in zip(sentences, speakers):
-    #             tbbt_episode.append([sentence, speaker])
+    for i in range(len(old_en_subset)):
+        utt_en = clean_sentence_brackets(old_en_subset[i])
+        utt_zh = clean_sentence_brackets(old_zh_subset[i])
+        utt_en_token = utt_en.strip().split()
+        if "-" in utt_en_token:
+            print(utt_en)
+            print(utt_en_token)
+            print(utt_zh)
+            print('=='*50)
+
     tbbt_episode = []
     for x in episode[(season_id, episode_id)]:
         if x[1] != 'Scene':
@@ -236,8 +292,6 @@ def fetch_subsets(episode, en_subtitle, zh_subtitle, results, season_id, episode
             temp_tbbt_episode.append(item)
 
     return en_subset, zh_subset, temp_tbbt_episode
-
-
 
 
 def get_substrings(string):
