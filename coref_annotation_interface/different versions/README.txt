@@ -21,6 +21,8 @@
 --current_version_character_simplified.html
 	Simplify the speaker short cut to Previous/Current/Next Speaker
 
+--current_version.html
+	The latest version of annotation interface
 
 
 
