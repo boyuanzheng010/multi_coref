@@ -147,8 +147,7 @@
             answerSpans: [],
             scrollToQuery: false,
             showAllQueries: false,
-            sentenceNumber: 0,
-            currentScene: 1
+            sentenceNumber: 0
         },
         initialize: function() {
             for (var query of this.attributes.querySpans) {
@@ -172,12 +171,12 @@
                 function(span) { return span.sentenceIndex * maxLength * maxLength +
                                         span.startToken * maxLength +
                                         span.endToken; });
+
             this.attributes.clickSpans = _.sortBy(
                 this.attributes.clickSpans,
                 function(span) { return span.sentenceIndex * maxLength * maxLength +
                                         span.startToken * maxLength +
                                         span.endToken; });
-            this.attributes.activeQueryIndex = this.attributes.querySpans_offsets[this.attributes.currentScene-1];
         },
         clearAllAnswerSpan: function(answerIndex) {
             this.attributes.answerSpans[answerIndex].span_list = [{
@@ -367,15 +366,12 @@
         stepActiveQueryIndex: function(forward) {
             if (forward) {
                 this.setActiveQueryIndex(
-                    // Check whether it is the last element in the current scene
-                    this.attributes.activeQueryIndex === (this.attributes.querySpans_offsets[this.attributes.currentScene]-1) ?
-                        this.attributes.querySpans_offsets[this.attributes.currentScene-1]:
-                        this.attributes.activeQueryIndex + 1);
+                    (this.attributes.activeQueryIndex + 1) %
+                    this.attributes.answerSpans.length);
             } else {
                 this.setActiveQueryIndex(
-                    // Check whether it is the first element in the current scene
-                    this.attributes.activeQueryIndex === this.attributes.querySpans_offsets[this.attributes.currentScene-1] ?
-                        this.attributes.querySpans_offsets[this.attributes.currentScene]- 1:
+                    this.attributes.activeQueryIndex === 0 ?
+                        this.attributes.answerSpans.length - 1 :
                         this.attributes.activeQueryIndex - 1);
             }
             this.attributes.scrollToQuery = true;
@@ -383,17 +379,13 @@
         skipActiveQueryIndex: function(forward) {
             var skipSize = 10;
             if (forward) {
-                this.setActiveQueryIndex(
-                    // Check whether it will exceed the last element in the current scene
-                    this.attributes.activeQueryIndex + skipSize >= (this.attributes.querySpans_offsets[this.attributes.currentScene]-1) ?
-                        this.attributes.querySpans_offsets[this.attributes.currentScene-1]:
-                        this.attributes.activeQueryIndex + skipSize);
+                this.setActiveQueryIndex(Math.min(
+                    this.attributes.activeQueryIndex + skipSize,
+                    this.attributes.answerSpans.length - 1));
             } else {
-                this.setActiveQueryIndex(
-                    // Check whether it will exceed the first element in the current scene
-                    this.attributes.activeQueryIndex - skipSize <= this.attributes.querySpans_offsets[this.attributes.currentScene-1] ?
-                        this.attributes.querySpans_offsets[this.attributes.currentScene]- 1:
-                        this.attributes.activeQueryIndex - skipSize);
+                this.setActiveQueryIndex(Math.max(
+                    this.attributes.activeQueryIndex - skipSize,
+                    0));
             }
             this.attributes.scrollToQuery = true;
         },
@@ -452,22 +444,7 @@
                     }
                 }
             }
-        },
-        goPreviousScene: function () {
-            var currentScene = this.attributes.currentScene;
-            if (currentScene>=2) {
-                this.attributes.currentScene = currentScene - 1;
-            }
-            this.attributes.activeQueryIndex = this.attributes.querySpans_offsets[this.attributes.currentScene-1];
-        },
-        goNextScene: function () {
-            var currentScene = this.attributes.currentScene;
-            console.log(this.attributes.querySpans_offsets.length-1);
-            if (currentScene<this.attributes.querySpans_offsets.length-1) {
-                this.attributes.currentScene = currentScene + 1;
-            }
-            this.attributes.activeQueryIndex = this.attributes.querySpans_offsets[this.attributes.currentScene-1];
-        },
+        }
     });
 
     var CandidateListView = Backbone.View.extend({
@@ -752,9 +729,7 @@
             'click .select_query_button': 'onSelectQuery',
             'click .step_query_button': 'onStepQuery',
             'click .skip_query_button': 'onSkipQuery',
-            'click .show_all_queries_button': 'onShowAllQueries',
-            'click .previous_scene_button': 'previousScene',
-            'click .next_scene_button': 'nextScene'
+            'click .show_all_queries_button': 'onShowAllQueries'
         },
         onStartDrag: function(event) {
             console.log("-----Use onStartDrag Function-----")
@@ -819,14 +794,6 @@
             this.model.toggleShowAllQueries();
             this.model.trigger('change');
         },
-        previousScene: function(event) {
-            this.model.goPreviousScene();
-            this.model.trigger('change');
-        },
-        nextScene: function(event) {
-            this.model.goNextScene();
-            this.model.trigger('change');
-        },
         makeQueryButton: function(queryIndex) {
             var answerSpan = this.model.attributes.answerSpans[queryIndex];
             var activeQueryIndex = this.model.attributes.activeQueryIndex;
@@ -850,31 +817,12 @@
 
             // Shwo all the utterances
             var sentences = this.model.get('sentences');
-            var sentence_offsets = this.model.get('sentence_offsets');
-            var querySpans_offsets = this.model.get('querySpans_offsets');
             var activeQueryIndex = this.model.get('activeQueryIndex');
             var activeQuerySpan = this.model.attributes.answerSpans[activeQueryIndex];
             var activeQueryIsValid = (activeQuerySpan.status === AnswerSpanStatus.OK);
             // var activeAnswerSpanText = this.model.getAnswerSpanText(activeQueryIndex);
             var activeAnswerSpanText = this.model.getAllAnswerSpanText(activeQueryIndex);
             var activeQuerySpanText = this.model.getQuerySpanText(activeQueryIndex);
-
-            var sceneDiv = $('<div>')
-                .addClass('d-flex justify-content-between')
-                .append($('<div>')
-                    .addClass('d-flex')
-                    .append($('<button>')
-                        .addClass('btn btn-outline-primary previous_scene_button m-1')
-                        .addClass(this.model.attributes.currentScene === 1 ?  'disabled' : '')
-                        .attr('type', 'button')
-                        .text('Previous Scene'))
-                    .append($('<button>')
-                        .addClass('btn btn-outline-primary next_scene_button m-1')
-                        .addClass(this.model.attributes.currentScene === this.model.attributes.sentence_offsets.length-1 ?  'disabled' : '')
-                        .attr('type', 'button')
-                        .text('Next Scene')))
-                    .append($('<i>').addClass('me-2 mt-1').text('Current Scene: '+this.model.attributes.currentScene.toString()+" / " + (this.model.attributes.sentence_offsets.length-1).toString()));
-
 
             var statusDiv = $('<div>')
                 .addClass('mb-1')
@@ -923,38 +871,18 @@
                         .attr('type', 'button')
                         .attr('aria-label', 'Previous query')
                         .append($('<span>').attr('aria-hidden', 'true').text('‹'))));
-            // var queryListRadius = 2;
-            // var queryListSize = 2 * queryListRadius + 1;
-            // var queryListStart = Math.max(activeQueryIndex - queryListRadius, 0);
-            // var queryListEnd = Math.min(activeQueryIndex + 1 + queryListRadius, this.model.attributes.querySpans.length);
-            // if (queryListStart === 0) {
-            //     queryListEnd = Math.min(this.model.attributes.querySpans.length, queryListStart + queryListSize);
-            // }
-            // if (queryListEnd === this.model.attributes.querySpans.length) {
-            //     queryListStart = Math.max(0, queryListEnd - queryListSize);
-            // }
-            // var queryListContinuesStart = queryListStart > 0;
-            // var queryListContinuesEnd = queryListEnd < this.model.attributes.querySpans.length;
-            // var queryListContinues = queryListContinuesStart || queryListContinuesEnd;
-            // var queryListDiv = $('<div>')
-            //     .addClass('d-flex px-2 mx-1 overflow-auto');
-            // if (queryListContinuesStart) {
-            //     queryListDiv.append($('<div>')
-            //         .addClass('text-nowrap m-1 pe-2')
-            //         .text('. . .'));
-            // }
             var queryListRadius = 2;
             var queryListSize = 2 * queryListRadius + 1;
-            var queryListStart = Math.max(activeQueryIndex - queryListRadius, querySpans_offsets[this.model.attributes.currentScene-1]);
-            var queryListEnd = Math.min(activeQueryIndex + 1 + queryListRadius, querySpans_offsets[this.model.attributes.currentScene]);
-            if (queryListStart === querySpans_offsets[this.model.attributes.currentScene-1]) {
-                queryListEnd = Math.min(querySpans_offsets[this.model.attributes.currentScene], queryListStart + queryListSize);
+            var queryListStart = Math.max(activeQueryIndex - queryListRadius, 0);
+            var queryListEnd = Math.min(activeQueryIndex + 1 + queryListRadius, this.model.attributes.querySpans.length);
+            if (queryListStart === 0) {
+                queryListEnd = Math.min(this.model.attributes.querySpans.length, queryListStart + queryListSize);
             }
-            if (queryListEnd === querySpans_offsets[this.model.attributes.currentScene]) {
-                queryListStart = Math.max(querySpans_offsets[this.model.attributes.currentScene-1], queryListEnd - queryListSize);
+            if (queryListEnd === this.model.attributes.querySpans.length) {
+                queryListStart = Math.max(0, queryListEnd - queryListSize);
             }
-            var queryListContinuesStart = queryListStart > querySpans_offsets[this.model.attributes.currentScene-1];
-            var queryListContinuesEnd = queryListEnd < querySpans_offsets[this.model.attributes.currentScene];
+            var queryListContinuesStart = queryListStart > 0;
+            var queryListContinuesEnd = queryListEnd < this.model.attributes.querySpans.length;
             var queryListContinues = queryListContinuesStart || queryListContinuesEnd;
             var queryListDiv = $('<div>')
                 .addClass('d-flex px-2 mx-1 overflow-auto');
@@ -963,12 +891,9 @@
                     .addClass('text-nowrap m-1 pe-2')
                     .text('. . .'));
             }
-
-            // Add the active query navigation bar
             for (var queryIndex = queryListStart; queryIndex < queryListEnd; queryIndex++) {
                 queryListDiv.append(this.makeQueryButton(queryIndex));
             }
-
             if (queryListContinuesEnd) {
                 queryListDiv.append($('<div>')
                     .addClass('text-nowrap m-1 ps-2')
@@ -1001,10 +926,7 @@
             var allQueriesDiv = $('<div>')
                 .addClass('p-2 collapse')
                 .addClass(this.model.attributes.showAllQueries ? 'show' : '');
-
-            // Add all active query in a collection
-            // for (var queryIndex = 0; queryIndex < this.model.attributes.querySpans.length; queryIndex++) {
-            for (var queryIndex = querySpans_offsets[this.model.attributes.currentScene-1]; queryIndex < querySpans_offsets[this.model.attributes.currentScene]; queryIndex++) {
+            for (var queryIndex = 0; queryIndex < this.model.attributes.querySpans.length; queryIndex++) {
                 allQueriesDiv.append(this.makeQueryButton(queryIndex));
             }
 
@@ -1019,7 +941,6 @@
 
             var statusNavDiv = $('<div>')
                 .addClass('sticky-top bg-white p-3 border')
-                .append(sceneDiv)
                 .append(statusDiv)
                 .append(navDiv);
             this.$el.append(statusNavDiv);
@@ -1028,11 +949,8 @@
                 .addClass('my-3')
                 .append($('<h5>').text('Text'));
             var activeQueryElement = null;
-
-            // Add the paragraph
             var paragraph = $('<p>');
-            // for (var si = 0; si < sentences.length; si++) {
-            for (var si = sentence_offsets[this.model.attributes.currentScene-1]; si < sentence_offsets[this.model.attributes.currentScene]; si++) {
+            for (var si = 0; si < sentences.length; si++) {
                 if (sentences[si].length === 0) {
                     textDiv.append(paragraph);
                     paragraph = $('<p>');
