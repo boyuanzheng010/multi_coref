@@ -1196,7 +1196,7 @@
     const previousAnswerClass = 'btn-outline-primary';
 
     const uncertainText = 'Uncertain';
-    const uncertainButtonText = '(u) Need more information to be certain.';
+    const uncertainButtonText = '(u) Need more visual information to be certain.';
     const uncertainClass = 'btn-outline-primary';
 
     const nextAnswerText = 'Add span';
@@ -1285,11 +1285,11 @@
         </p>
 
         <p>
-            <b>NOTE 1:</b> This is a pilot HIT. Upon successful completion of this HIT, you will be eligble for a 100% bonus payment,
+            <b>NOTE 1:</b> This is a pilot HIT. Upon successful completion of this HIT, you will be eligible for a 100% bonus payment,
             and you will be eligible to participate in future similar HITs, also with the opportunity for substantial bonus payments.
             You will receive this bonus if your results are deemed high-quality.
             The only way to obtain high-quality results is by following the instructions.
-            The HIT should take about 35 minutes, including 15 minutes for reading the instruction and 20 minutes for completing the tasks of three scenes.
+            The HIT should take about 25-35 minutes, including 5-10 minutes for reading the instruction and 20-25 minutes for completing the tasks of three scenes.
         </p>
 
         <p>
@@ -1300,7 +1300,7 @@
         </p>
 
         <p>
-            You will be shown the transcript of several scenes from a TV show.
+            You will be shown the transcript of 3 scenes from a TV show.
             For each sentence, we have highlighted potential mentions (a word or phrase) of an <em>entity</em> (a person, place, or thing).
             This <em>entity mention</em> may be a pronoun (such as "she" or "their") or something else.
             We need your help to find an earlier mention of the same entity, whether in the same sentence or in an earlier sentence.
@@ -1341,8 +1341,11 @@
                 <span class="btn token btn-dark">The</span> <span class="btn token btn-dark">office</span> <span class="btn token btn-dark">manager</span> usually comes to work early .  <span class="btn token btn-success font-weight-bold">She</span> likes to get a head start on the day .
             </p>
             <p>
-                <b>Reminder:</b> While dragging, please only select Noun Phrases, Pronouns. Especially for th-words (this, that, there, here) and wh-words (who, what, when, which).
+                <b>Reminder 1:</b> While dragging, please only select Noun Phrases or Pronouns. Especially for th-words (this, that, there, here) and wh-words (who, what, when, which).
             </p>
+            <p>
+                <b>Reminder 2:</b> For consistency, candidate answers in <span class="btn btn-outline-primary p-1">Overlapping Candidates</span> box are preferred. If there is no suitable candidate, you could select a span by dragging.
+            </p>            
         </div>
 
         <div class="card card-body">
@@ -1358,6 +1361,7 @@
                 The office manager does n't find <span class="btn token btn-dark">her</span> job challenging enough .  <span class="btn token btn-success font-weight-bold">She</span> comes to work early in hopes of getting promoted .
             </p>
         </div>
+
 
         <div class="card card-body">
             <h5 class="card-title">If there is no previous mention of the entity, select <span class="btn btn-outline-primary p-1">(p) No previous mention</span>.</h5>
@@ -1381,7 +1385,7 @@
 
         <div class="card card-body">
             <h5 class="card-title">If the selected span does not refer to an entity (a person, place, or thing), please select <span class="btn btn-outline-primary p-1">(m) Not mention</span>.</h5>
-            <p>For example:</p>
+            <p>Since our query spans are automatic generated. Some query span is not a mention. For example:</p>
             <p class="example_sentence">
                 <span class="btn btn-outline-primary p-1">Leonard</span>:Hi, I am Leonard. This is Sheldon.
             </p>
@@ -1429,6 +1433,8 @@
         </div>
 
 
+
+
         <div class="card card-body">
             <h5 class="card-title">Keyboard Short Cuts to select speaker.</h5>
             <p>You can press "k" on your keyboard shortcut to select the speaker of the current utterance. You could select the speaker in previous utterance by pressing "j" in keyboard and speaker in next utterance by pressing "l" in keyboard.</p>
@@ -1447,6 +1453,61 @@
             </p>
         </div>
 
+        <div class="card card-body">
+            <h5 class="card-title">Th-words, Wh-words</h5>
+            <p>Th-words (that, this, there, these, etc.) and Wh-words (what, when, which, etc.) are harder to annotate </p>
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Th-words Example 1</span>: Charlie bought a hot dog. <span class="btn token btn-danger font-weight-bold">This</span> hot dog was cold.
+            </p>
+
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Th-words Example 2</span>: Charlie bought a hot dog and ate <span class="btn token btn-danger font-weight-bold">this</span> for lunch.
+            </p>
+
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Th-words Example 3</span>: Charlie thought he should buy a hot dog. <span class="btn token btn-danger font-weight-bold">This</span> was a great idea.
+            </p>
+
+            <p> In th-words example 1, the full span <span class="btn token btn-dark">This hot dog</span> is the noun phrase (<span class="btn token btn-danger font-weight-bold">This</span> is a determiner and not a noun phrase),
+                and so it should be labelled as <span class="btn btn-outline-primary p-1">(m) Not mention</span>.
+            <p> In example 2, <span class="btn token btn-danger font-weight-bold">this</span> should be annotated with precedent mention <span class="btn token btn-dark">a hot dog</span>. </p>
+            <p> In example 3, <span class="btn token btn-danger font-weight-bold">This</span> refers to Charlie's idea <span class="btn token btn-dark">he should buy a hot dog</span>.
+                But we only annotate noun phrases, pronoun and possessives instead clause and sentence, so this query should be annotated as <span class="btn btn-outline-primary p-1">(p) No previous mention</span>.
+            </p>
+            <p> </p>
+
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Wh-words Example 1</span>: <span class="btn token btn-danger font-weight-bold">What</span> is your plan ?
+            </p>
+
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Wh-words Example 2</span>: <span class="btn token btn-danger font-weight-bold">What</span> if this plan wouldn't work ?
+            </p>
+
+            <p>
+                In example 1, <span class="btn token btn-danger font-weight-bold">What</span> should be annotated with <span class="btn token btn-dark">your plan</span>. In example 2, the query should be annotated as <span class="btn btn-outline-primary p-1">(m) Not mention</span>.
+            </p>
+        </div>
+
+        <div class="card card-body">
+            <h5 class="card-title">Uncertainty (Lack Visual Information)</h5>
+            <p>Some queries involve visual information. For example:</p>
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Visual Information</span>: Leonard wears funny costume (shirt, pants, shoes) and plans to go out with Penny.
+            </p>
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Leonard</span>: Hey Penny, look at my new costume.
+            </p>
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Penny</span>: What you are wearing? They are terrible.
+            </p>
+            <p class="example_sentence">
+                <span class="btn btn-outline-primary p-1">Leonard</span>: You mean this (pointing at shirt)? Or this (pointing at pants)? Or this (pointing at shoes)?
+            </p>
+
+            <p>In the last utterance, without visual information in brackets, precedent mentions of <span class="btn token btn-danger font-weight-bold">this</span> can not decided. So you should click <span class="btn btn-outline-primary p-1">(p) No previous mention</span> and click <span class="btn btn-outline-primary p-1">(u) Need more visual information to be certain</span>
+            </p>
+        </div>
 
         <p class="pt-3">
             In these simplified examples, we have highlighted one entity mention at a time and asked for previous mention of that entity.  In general, we will select multiple entity mentions across the document (called <em>query mentions</em>) and ask for a preceding mention for each one.  We will display the list of query mentions above the text; the active query mention will be highlighted in the text and bolded in the list above.  Dragging over text will select the immediately previous mention for the active query mention only; a different query mention may be activated by clicking on it in the list of query mentions, by using the provided "next query" and "previous query" buttons, or by pressing "Tab" or "Shift" + "Tab" on your keyboard.
@@ -1581,7 +1642,7 @@
                 <h5>Keyboard Shortcuts</h5>
                 <p><span class="btn btn-light p-1 border">Tab</span> Next Query</p>
                 <p><span class="btn btn-light p-1 border me-2">Shift</span><span class="btn btn-light p-1 border">Tab</span> Previous Query</p>
-                <p><span class="btn btn-light p-1 border">w</span> Select not mention</p>
+                <p><span class="btn btn-light p-1 border">m</span> Select not mention</p>
                 <p><span class="btn btn-light p-1 border">k</span> Select current speaker</p>
                 <p><span class="btn btn-light p-1 border">?</span>Show all shortcuts</p>
             </div>
@@ -1613,22 +1674,22 @@
                             <td>Select overlapping candidate from list</td>
                         </tr>
                         <tr>
-                            <td><span class="btn btn-light p-1 border">q</span></td>
+                            <td><span class="btn btn-light p-1 border">p</span></td>
                             <td>Select "no previous mention"</td>
                         </tr>
                         <tr>
-                            <td><span class="btn btn-light p-1 border">w</span></td>
+                            <td><span class="btn btn-light p-1 border">m</span></td>
                             <td>Select "not mention"</td>
                         </tr>
 
                         <tr>
-                            <td><span class="btn btn-light p-1 border">n</span></td>
-                            <td>Add Answer for Plural"</td>
+                            <td><span class="btn btn-light p-1 border">a</span></td>
+                            <td>Add span for plural mentions</td>
                         </tr>
 
                         <tr>
-                            <td><span class="btn btn-light p-1 border">m</span></td>
-                            <td>Cancel Current Answer"</td>
+                            <td><span class="btn btn-light p-1 border">c</span></td>
+                            <td>Cancel current span in plural mentions</td>
                         </tr>
 
                         <tr>
