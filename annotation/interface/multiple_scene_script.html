@@ -178,6 +178,7 @@
                                         span.startToken * maxLength +
                                         span.endToken; });
             this.attributes.activeQueryIndex = this.attributes.querySpans_offsets[this.attributes.currentScene-1];
+            this.attributes.allSceneIds = this.attributes.scene_ids;
         },
         clearAllAnswerSpan: function(answerIndex) {
             this.attributes.answerSpans[answerIndex].span_list = [{
