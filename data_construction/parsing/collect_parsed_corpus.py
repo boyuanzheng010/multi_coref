@@ -8,15 +8,12 @@ import benepar
 from tqdm import tqdm
 from copy import deepcopy
 
-
-with open('uncleaned_tbbt_en_zh.pkl', 'rb') as f:
+with open('friends_three_way_new.pkl', 'rb') as f:
     corpus = pkl.load(f)
-
 
 sm_parser = spacy.load('en_core_web_sm')
 berkeley_parser = spacy.load('en_core_web_md')
 berkeley_parser.add_pipe("benepar", config={"model": "benepar_en3"})
-# stanza_parser = spacy_stanza.load_pipeline('en')
 trf_parser = spacy.load("en_core_web_trf")
 
 output = {}
@@ -27,19 +24,19 @@ for epi_id in tqdm(list(corpus.keys())):
     # Parse utterance in each scene and add the parsed results to the utterance
     for scene in scenes:
         for instance in scene:
-            if 'en_subtitles' not in instance:
-                continue
-            en_subtitles = [x.strip().lstrip('-').lstrip().lstrip('.').lstrip() for x in instance['en_subtitles']]
-            instance['en_subtitles'] = en_subtitles
+            if instance['en_subtitles'] != "":
+                text = instance['en_subtitles']
+            else:
+                text = instance['utterance']
 
-            text = " ".join(en_subtitles)
             utterance = sm_parser(text)
             instance['sm_noun_chunk'] = [(item.text, item.start, item.end) for item in utterance.noun_chunks]
-            instance['sm_pron'] = [(item.text,i, i+1, item.pos_, item.tag_) for i, item in enumerate(utterance)]
+            instance['sm_pron'] = [(item.text, i, i + 1, item.pos_, item.tag_) for i, item in enumerate(utterance)]
 
             utterance = berkeley_parser(text)
             instance['berkeley_noun_chunk'] = [(item.text, item.start, item.end) for item in utterance.noun_chunks]
-            instance['berkeley_pron'] = [(item.text,i, i+1, item.pos_, item.tag_) for i, item in enumerate(utterance)]
+            instance['berkeley_pron'] = [(item.text, i, i + 1, item.pos_, item.tag_) for i, item in
+                                         enumerate(utterance)]
 
             # utterance = stanza_parser(text)
             # instance['stanza_noun_chunk'] = [(item.text, item.start, item.end) for item in utterance.noun_chunks]
@@ -47,17 +44,8 @@ for epi_id in tqdm(list(corpus.keys())):
 
             utterance = trf_parser(text)
             instance['trf_noun_chunk'] = [(item.text, item.start, item.end) for item in utterance.noun_chunks]
-            instance['trf_pron'] = [(item.text,i, i+1, item.pos_, item.tag_) for i, item in enumerate(utterance)]
+            instance['trf_pron'] = [(item.text, i, i + 1, item.pos_, item.tag_) for i, item in enumerate(utterance)]
     output[epi_id] = scenes
 
-with open('parsed_corpus_all.pkl', 'wb') as f:
+with open('parsed_corpus_friends_new.pkl', 'wb') as f:
     pkl.dump(output, f)
-
-
-
-
-
-
-
-
-
