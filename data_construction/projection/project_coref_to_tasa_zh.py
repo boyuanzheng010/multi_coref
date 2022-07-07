@@ -17,9 +17,11 @@ writer.writeheader()
 # f = open("annotation_results_pilot_golden.json")
 # f = open("dev-test-batch1.json")
 # f = open("all_coref_data_en.json")
-with open('dev_test_adjudication.pkl', 'rb') as f:
-    scene_ids = pkl.load(f).keys()
-print(scene_ids)
+
+
+with open('adjudication_data/split_dict.pkl', 'rb') as f:
+    split_dict = pkl.load(f)
+    scene_ids = split_dict['test']
 
 f = open("all_coref_data_en_finalized.json")
 data = json.load(f)
@@ -93,7 +95,6 @@ for scene in data:
             # if antecedents != ['n', 'o', 't', 'M', 'e', 'n', 't', 'i', 'o', 'n']:
             write_to_csv(scene, rows[scene_id], query['sentenceIndex'], query['startToken'], query['endToken'],
                          query['mention_id'])
-
             if antecedents != "notPresent":
                 # if antecedents != ["n", "o", "t", "P", "r", "e", "s", "e", "n", "t"]:
                 for antecedent in antecedents:
@@ -101,7 +102,10 @@ for scene in data:
                         write_to_csv(scene, rows[scene_id], antecedent['sentenceIndex'], antecedent['startToken'],
                                      antecedent['endToken'], antecedent['mention_id'])
 
-
+count = 0
+for item in rows:
+    count += len(rows[item])
+print(count)
 
 for row_k, row in rows.items():
     # unique list
@@ -142,23 +146,21 @@ for line in f_reader:
 for scene_id, row in rows.items():
     if scene_id not in scene_ids:
         continue
+    processed_mentions = []
     for r in row:
+        if tuple((r[1], r[2], r[3])) in processed_mentions:
+            continue
         r_align = scene_sent_align[str(r[0]) + ", " + str(r[1])]
-        # print("src st and end", r[2], r[3])
-        # print("r_align", r_align)
         src = copy.copy(r_align.src_tok)
-        src[r[2]:r[3]] = [' '.join(src[r[2]:r[3]])]
+        # src[r[2]:r[3]] = [' '.join(src[r[2]:r[3]])]
+
         ts, (start, end) = get_tgt_string(r_align.tgt_tok, r_align.align, [r[2], r[3] - 1])
-        # print("ts, (start)", ts, (start))
-        # print("end", end)
         tgt_tok_seg = r_align.tgt_tok
         tgt_tok_char = list("".join(tgt_tok_seg))
-        # print("tgt_tok_seg", tgt_tok_seg)
-        # print("tgt_tok_char", tgt_tok_char)
+
         seg_len = []
         for tts in tgt_tok_seg:
             seg_len.append(len(list(tts)))
-        # print("seg_len", seg_len)
         start_char = 0
         end_char = 0
         for sl in range(start):
@@ -174,7 +176,7 @@ for scene_id, row in rows.items():
                 else:
                     list_s.append(True)
             alignment.append(list_s)
-        # print("r[2], alignment", r[2], alignment)
+        processed_mentions.append(tuple((r[1], r[2], r[3])))
         writer.writerow({
             'src_tokens': src,
             'tar_tokens': tgt_tok_char,
