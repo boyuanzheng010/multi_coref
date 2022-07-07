@@ -4,18 +4,23 @@ import jieba
 import json
 import re
 import align_util
+import pickle as pkl
 from sacremoses import MosesTokenizer
 
 mt = MosesTokenizer(lang='fa')
 
-csv_w = open("to_tasa.csv", "w", encoding="utf-8")
+csv_w = open("to_tasa_all_fa_temp.csv", "w", encoding="utf-8")
 fieldnames = ['src_tokens', 'tar_tokens', 'config_obj']
 writer = csv.DictWriter(csv_w, fieldnames, lineterminator='\n', quoting=csv.QUOTE_ALL)
 writer.writeheader()
 
+with open('adjudication_data/split_dict.pkl', 'rb') as f:
+  split_dict = pkl.load(f)
+  scene_ids = split_dict['test']
+
 #f = open("annotation_results_pilot_golden.json")
-f = open("dev-test-batch1.json")
-#f = open("all_coref_data_en.json")
+# f = open("dev-test-batch1.json")
+f = open("all_coref_data_en_finalized.json")
 data = json.load(f)
 
 awesomes = []
@@ -56,8 +61,11 @@ def write_to_csv(scene, rows, sent_id, sta_tok, end_tok):
   fa_subtitles = scene['fa_subtitles']
   if fa_subtitles[sent_id] != "": # else, exclude the sentence from the alignment task.
     en_toks = copy.copy(sentences[sent_id])
+
     # tokenization for Farsi
     fa_toks = mt.tokenize(fa_subtitles[sent_id], escape=False)
+
+
     # word segmentation for Chinese
     #fa_toks = [item for item in jieba.cut(re.sub(r"\s+", "", fa_subtitles[sent_id]), cut_all=False)]
     # form span of [sta_tok, end_tok)
@@ -75,18 +83,18 @@ def write_to_csv(scene, rows, sent_id, sta_tok, end_tok):
 rows = {} 
 for scene in data:
   scene_id = scene['scene_id']
+  if scene_id not in scene_ids:
+    continue
   rows[scene_id] = []
   for s in scene['annotations']:
     query = s['query']
     antecedents = s['antecedents']
-    if antecedents != "notMention":
-    #if antecedents != ['n', 'o', 't', 'M', 'e', 'n', 't', 'i', 'o', 'n']:
+    if antecedents not in  [['n', 'o', 't', 'M', 'e', 'n', 't', 'i', 'o', 'n'], "notMention"]:
       write_to_csv(scene, rows[scene_id], query['sentenceIndex'], query['startToken'], query['endToken'])
-
-      if antecedents != "notPresent":
-      #if antecedents != ["n", "o", "t", "P", "r", "e", "s", "e", "n", "t"]:
-        for antecedent in antecedents: 
-          write_to_csv(scene, rows[scene_id], antecedent['sentenceIndex'], antecedent['startToken'], antecedent['endToken'])
+      if antecedents not in [["n", "o", "t", "P", "r", "e", "s", "e", "n", "t"], 'notPresent']:
+        for antecedent in antecedents:
+          if antecedent['startToken'] != 0:
+            write_to_csv(scene, rows[scene_id], antecedent['sentenceIndex'], antecedent['startToken'], antecedent['endToken'])
 
 for row_k, row in rows.items():
   # unique list
@@ -95,15 +103,21 @@ for row_k, row in rows.items():
     if r not in unique_list:
       unique_list.append(r)
   rows[row_k] = unique_list
-  rows[row_k].sort(key = lambda x: x[0]) 
+  rows[row_k].sort(key = lambda x: x[0])
+
+count = 0
+for item in rows:
+    count += len(rows[item])
+print(count)
 
 # add target side alignments from word alignment results
 #aligns = align_util.load_aligns('/srv/local1/mahsay/awesome-align/coref/pilot_s08e02c05t.en-zh', '/srv/local1/mahsay/awesome-align/coref/pilot_s08e02c05t.en-zh.xlml16.ft.sup-align.out')
-aligns = align_util.load_aligns('/srv/local1/mahsay/awesome-align/coref/dev-test-batch1.en-fa', '/srv/local1/mahsay/awesome-align/coref/dev-test-batch1.en-fa.ft.sup-align.out')
+# aligns = align_util.load_aligns('/srv/local1/mahsay/awesome-align/coref/dev-test-batch1.en-fa', '/srv/local1/mahsay/awesome-align/coref/dev-test-batch1.en-fa.ft.sup-align.out')
 #aligns = align_util.load_aligns('/srv/local1/mahsay/awesome-align/coref/all_coref_data_en.en-zh', '/srv/local1/mahsay/awesome-align/coref/all_coref_data_en.ft.sup-align.out')
 #aligns = align_util.load_aligns('/srv/local1/mahsay/awesome-align/coref/all_coref_data_en.en-fa', '/srv/local1/mahsay/awesome-align/coref/all_coref_data_en.en-fa.ft.sup-align.out')
+aligns = align_util.load_aligns('coref/all_coref_data_en.en-fa', 'coref/all_coref_data_en.en-fa.ft.sup-align.out')
 scene_sent_align = {}
-f = open("to_awesome_dev-test-batch1_fa.csv", "r", encoding="utf-8")
+f = open("to_awesome_fa_all.csv", "r", encoding="utf-8")
 #f = open("to_awesome_fa_all.csv", "r", encoding="utf-8")
 f_reader = csv.DictReader(f, quoting=csv.QUOTE_ALL)
 i = 0
@@ -112,7 +126,7 @@ for line in f_reader:
     assert(line['src_tgt'].strip() == " ".join(aligns[i].src_tok)+" ||| "+  " ".join(aligns[i].tgt_tok))
   else:
     print("Contains EMPTY")
-  scene_sent_align[line['scene']+", "+ line['sentence']] = aligns[i]#.align
+  scene_sent_align[line['scene'][:-1]+", "+ line['sentence']] = aligns[i]#.align
   i += 1
 
 #print("scene_sent_align", scene_sent_align)
@@ -121,7 +135,12 @@ for line in f_reader:
 #  ts, (start,end) = get_tgt_string(align.tgt_tok,align.align,[0,1])
 
 for scene_id, row in rows.items():
+  if scene_id not in scene_ids:
+    continue
+  processed_mentions = []
   for r in row:
+    if tuple((r[1], r[2], r[3])) in processed_mentions:
+      continue
     r_align = scene_sent_align[str(r[0])+", "+ str(r[1])]
     #print("src st and end", r[2], r[3])
     #print("r_align", r_align)
@@ -157,12 +176,13 @@ for scene_id, row in rows.items():
         else:
           list_s.append(True)
       alignment.append(list_s)
+    processed_mentions.append(tuple((r[1], r[2], r[3])))
     #print("r[2], alignment", r[2], alignment)
     writer.writerow({
       'src_tokens': src,
       'tar_tokens': tgt_tok_char,
-     'config_obj': "{\"src_enable_retokenize\": false, \"version\": {\"PATCH\": 0, \"MAJOR\": 1, \"MINOR\": 0}, \"tar_enable_retokenize\": false,\"src_head_inds\":["+ str(r[2]) +"], \"tar_spans\":[["+ str(start)+", "+ str(end) +"]]}"
-      # 'config_obj': "{\"src_enable_retokenize\": false, \"version\": {\"PATCH\": 0, \"MAJOR\": 1, \"MINOR\": 0}, \"tar_enable_retokenize\": false,\"src_head_inds\":["+ str(r[2]) +"],\"alignment\":"+str(alignment).replace("'","").lower()+"}"
+     # 'config_obj': "{\"src_enable_retokenize\": false, \"version\": {\"PATCH\": 0, \"MAJOR\": 1, \"MINOR\": 0}, \"tar_enable_retokenize\": false,\"src_head_inds\":["+ str(r[2]) +"], \"tar_spans\":[["+ str(start)+", "+ str(end) +"]]}"
+      'config_obj': "{\"src_enable_retokenize\": false, \"version\": {\"PATCH\": 0, \"MAJOR\": 1, \"MINOR\": 0}, \"tar_enable_retokenize\": false,\"src_head_inds\":["+ str(r[2]) +"],\"alignment\":"+str(alignment).replace("'","").lower()+"}"
     })
 
 ## run only once, to get awesome-align input
