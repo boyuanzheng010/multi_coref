@@ -53,22 +53,22 @@ def get_tgt_string(segments_tgt_i,alignments_i,indexes):
 
 def write_to_json(scene, rows, q_sent_id, q_sta_tok, q_end_tok, a_sent_id, a_sta_tok, a_end_tok, query_mention_id, antecedent_mention_id):
   sentences = scene['sentences']
-  fa_subtitles = scene['zh_subtitles']
+  fa_subtitles = scene['fa_subtitles']
   if fa_subtitles[q_sent_id] != "": # else, exclude the sentence from the alignment task.
     q_en_toks = copy.copy(sentences[q_sent_id])
     # tokenization for Farsi
-    #q_fa_toks = mt.tokenize(fa_subtitles[q_sent_id], escape=False)
+    q_fa_toks = mt.tokenize(fa_subtitles[q_sent_id], escape=False)
     # word segmentation for Chinese
-    q_fa_toks = [item for item in jieba.cut(re.sub(r"\s+", "", fa_subtitles[q_sent_id]), cut_all=False)]
+    #q_fa_toks = [item for item in jieba.cut(re.sub(r"\s+", "", fa_subtitles[q_sent_id]), cut_all=False)]
     q_en_no_spk = q_en_toks[q_en_toks.index(":")+1:]
     q_head_sta = q_sta_tok - (q_en_toks.index(":") + 1)
     q_head_end = q_end_tok - (q_en_toks.index(":") + 1)
     if a_sent_id != -1: # there are antecedents
       a_en_toks = copy.copy(sentences[a_sent_id])
       # tokenization for Farsi
-      #a_fa_toks = mt.tokenize(fa_subtitles[a_sent_id], escape=False)
+      a_fa_toks = mt.tokenize(fa_subtitles[a_sent_id], escape=False)
       # word segmentation for Chinese
-      a_fa_toks = [item for item in jieba.cut(re.sub(r"\s+", "", fa_subtitles[a_sent_id]), cut_all=False)]
+      #a_fa_toks = [item for item in jieba.cut(re.sub(r"\s+", "", fa_subtitles[a_sent_id]), cut_all=False)]
       a_en_no_spk = a_en_toks[a_en_toks.index(":")+1:]
       a_head_sta = a_sta_tok - (a_en_toks.index(":") + 1)
       a_head_end = a_end_tok - (a_en_toks.index(":") + 1)
@@ -210,9 +210,8 @@ for scene_id, row in rows.items():
       if scene_id+", "+ str(ss) in scene_sent_align:
         # chinese
         # proj_sents.append(list("".join(scene_sent_align[scene_id+", "+ str(ss)].tgt_tok))) # Character-Level
-        proj_sents.append(scene_sent_align[scene_id+", "+ str(ss)].tgt_tok) # Token-Level
         # Farsi
-        #proj_sents.append(scene_sent_align[scene_id+", "+ str(ss)].tgt_tok)
+        proj_sents.append(scene_sent_align[scene_id+", "+ str(ss)].tgt_tok)
       else:
         proj_sents.append([])
     dict["sentences"] = proj_sents

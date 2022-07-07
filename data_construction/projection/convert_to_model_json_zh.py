@@ -157,8 +157,8 @@ for scene_id, row in rows.items():
       end_char += seg_len[sl]
     
     # do this for Farsi
-    start_char = start
-    end_char = end
+    #start_char = start
+    #end_char = end
     # antecedents
     
     character_name = ''
@@ -184,8 +184,8 @@ for scene_id, row in rows.items():
             a_end_char += seg_len[sl]
           
           # do this for Farsi
-          a_start_char = a_start
-          a_end_char = a_end
+          #a_start_char = a_start
+          #a_end_char = a_end
           
           if a_start_char == 0 and a_end_char == 0:
             annot = {"query": {"sentenceIndex": r[1], "startToken": start_char, "endToken": end_char, "mention_id": r[-2]}, "antecedents": ["null_projection"]}
@@ -203,8 +203,7 @@ for scene_id, row in rows.items():
     for ss in range(len(scene_sents[scene_id])):
       if scene_id+", "+ str(ss) in scene_sent_align:
         # chinese
-        # proj_sents.append(list("".join(scene_sent_align[scene_id+", "+ str(ss)].tgt_tok))) # Character-Level
-        proj_sents.append(scene_sent_align[scene_id+", "+ str(ss)].tgt_tok) # Token-Level
+        proj_sents.append(list("".join(scene_sent_align[scene_id+", "+ str(ss)].tgt_tok))) # Character-Level
         # Farsi
         #proj_sents.append(scene_sent_align[scene_id+", "+ str(ss)].tgt_tok)
       else:
