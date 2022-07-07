@@ -161,8 +161,8 @@ for scene_id, row in rows.items():
     writer.writerow({
       'src_tokens': src,
       'tar_tokens': tgt_tok_char,
-     # 'config_obj': "{\"src_enable_retokenize\": false, \"version\": {\"PATCH\": 0, \"MAJOR\": 1, \"MINOR\": 0}, \"tar_enable_retokenize\": false,\"src_head_inds\":["+ str(r[2]) +"], \"tar_spans\":[["+ str(start)+", "+ str(end) +"]]}"
-      'config_obj': "{\"src_enable_retokenize\": false, \"version\": {\"PATCH\": 0, \"MAJOR\": 1, \"MINOR\": 0}, \"tar_enable_retokenize\": false,\"src_head_inds\":["+ str(r[2]) +"],\"alignment\":"+str(alignment).replace("'","").lower()+"}"
+     'config_obj': "{\"src_enable_retokenize\": false, \"version\": {\"PATCH\": 0, \"MAJOR\": 1, \"MINOR\": 0}, \"tar_enable_retokenize\": false,\"src_head_inds\":["+ str(r[2]) +"], \"tar_spans\":[["+ str(start)+", "+ str(end) +"]]}"
+      # 'config_obj': "{\"src_enable_retokenize\": false, \"version\": {\"PATCH\": 0, \"MAJOR\": 1, \"MINOR\": 0}, \"tar_enable_retokenize\": false,\"src_head_inds\":["+ str(r[2]) +"],\"alignment\":"+str(alignment).replace("'","").lower()+"}"
     })
 
 ## run only once, to get awesome-align input
