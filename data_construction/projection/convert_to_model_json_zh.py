@@ -93,9 +93,9 @@ for scene in data:
     query = s['query']
     antecedents = s['antecedents']
     #if antecedents != "notMention":
-    if antecedents != ['n', 'o', 't', 'M', 'e', 'n', 't', 'i', 'o', 'n']:
+    if antecedents not in  [['n', 'o', 't', 'M', 'e', 'n', 't', 'i', 'o', 'n'], "notMention"]:
       #if antecedents != "notPresent":
-      if antecedents != ["n", "o", "t", "P", "r", "e", "s", "e", "n", "t"]:
+      if antecedents not in [["n", "o", "t", "P", "r", "e", "s", "e", "n", "t"], 'notPresent']:
         for antecedent in antecedents: 
           write_to_json(scene, rows[scene_id], query['sentenceIndex'], query['startToken'], query['endToken'], antecedent['sentenceIndex'], antecedent['startToken'], antecedent['endToken'], query['mention_id'], antecedent['mention_id'])
       else: # no antecedents
@@ -125,7 +125,7 @@ for line in f_reader:
     assert(line['src_tgt'].strip() == " ".join(aligns[i].src_tok)+" ||| "+  " ".join(aligns[i].tgt_tok))
   else:
     print("Contains EMPTY")
-  scene_sent_align[line['scene']+", "+ line['sentence']] = aligns[i]#.align
+  scene_sent_align[line['scene'][:-1]+", "+ line['sentence']] = aligns[i]#.align
   i += 1
 
 #print("scene_sent_align", scene_sent_align)
@@ -136,8 +136,12 @@ for scene_id, row in rows.items():
   
   dict = {"sentences": [], "annotations": [], "scene_id": ''}
   for r in row:
-#    print("\nr", r)
-    r_align = scene_sent_align[str(r[0])+"0, "+ str(r[1])]
+    r_align = scene_sent_align[str(r[0])+", "+ str(r[1])]
+    # try:
+    #     r_align = scene_sent_align[str(r[0]) + ", " + str(r[1])]
+    # except:
+    #     print(str(r[0]) + "0, " + str(r[1]))
+
     #print("src st and end", r[2], r[3])
     #print("r_align", r_align)
     src = copy.copy(r_align.src_tok)
@@ -157,8 +161,8 @@ for scene_id, row in rows.items():
       end_char += seg_len[sl]
     
     # do this for Farsi
-    #start_char = start
-    #end_char = end
+    start_char = start
+    end_char = end
     # antecedents
     
     character_name = ''
@@ -184,8 +188,8 @@ for scene_id, row in rows.items():
             a_end_char += seg_len[sl]
           
           # do this for Farsi
-          #a_start_char = a_start
-          #a_end_char = a_end
+          a_start_char = a_start
+          a_end_char = a_end
           
           if a_start_char == 0 and a_end_char == 0:
             annot = {"query": {"sentenceIndex": r[1], "startToken": start_char, "endToken": end_char, "mention_id": r[-2]}, "antecedents": ["null_projection"]}
@@ -203,7 +207,8 @@ for scene_id, row in rows.items():
     for ss in range(len(scene_sents[scene_id])):
       if scene_id+", "+ str(ss) in scene_sent_align:
         # chinese
-        proj_sents.append(list("".join(scene_sent_align[scene_id+", "+ str(ss)].tgt_tok))) # Character-Level
+        # proj_sents.append(list("".join(scene_sent_align[scene_id+", "+ str(ss)].tgt_tok))) # Character-Level
+        proj_sents.append(scene_sent_align[scene_id+", "+ str(ss)].tgt_tok) # Token-Level
         # Farsi
         #proj_sents.append(scene_sent_align[scene_id+", "+ str(ss)].tgt_tok)
       else:
