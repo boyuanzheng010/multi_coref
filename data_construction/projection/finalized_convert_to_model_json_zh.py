@@ -211,5 +211,5 @@ for scene_id, row in rows.items():
     dict["sentences"] = proj_sents
   proj.append(dict)
 #print(proj)
-with open('all_coref_data_en_zh_finalized.json', 'w', encoding='utf8') as outfile:
+with open('all_coref_data_en_zh_finalized_char.json', 'w', encoding='utf8') as outfile:
   json.dump(proj, outfile, ensure_ascii=False)
