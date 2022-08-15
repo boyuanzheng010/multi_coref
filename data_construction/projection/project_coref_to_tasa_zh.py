@@ -9,8 +9,8 @@ import pickle as pkl
 
 mt = MosesTokenizer(lang='fa')
 
-csv_w = open("to_tasa_all_zh_temp.csv", "w", encoding="utf-8")
-fieldnames = ['src_tokens', 'tar_tokens', 'config_obj']
+csv_w = open("to_tasa_all_zh_dev.csv", "w", encoding="utf-8")
+fieldnames = ['src_tokens', 'tar_tokens', 'config_obj', 'mention_id']
 writer = csv.DictWriter(csv_w, fieldnames, lineterminator='\n', quoting=csv.QUOTE_ALL)
 writer.writeheader()
 
@@ -21,7 +21,7 @@ writer.writeheader()
 
 with open('adjudication_data/split_dict.pkl', 'rb') as f:
     split_dict = pkl.load(f)
-    scene_ids = split_dict['test']
+    scene_ids = split_dict['dev']
 
 f = open("all_coref_data_en_finalized.json")
 data = json.load(f)
@@ -91,16 +91,36 @@ for scene in data:
     for s in scene['annotations']:
         query = s['query']
         antecedents = s['antecedents']
-        if antecedents != "notMention":
+        if antecedents not in ["notMention", ['n', 'o', 't', 'M', 'e', 'n', 't', 'i', 'o', 'n']]:
             # if antecedents != ['n', 'o', 't', 'M', 'e', 'n', 't', 'i', 'o', 'n']:
             write_to_csv(scene, rows[scene_id], query['sentenceIndex'], query['startToken'], query['endToken'],
                          query['mention_id'])
-            if antecedents != "notPresent":
+            if antecedents not in ["notPresent", ["n", "o", "t", "P", "r", "e", "s", "e", "n", "t"]]:
                 # if antecedents != ["n", "o", "t", "P", "r", "e", "s", "e", "n", "t"]:
                 for antecedent in antecedents:
                     if antecedent['startToken'] != 0:
                         write_to_csv(scene, rows[scene_id], antecedent['sentenceIndex'], antecedent['startToken'],
                                      antecedent['endToken'], antecedent['mention_id'])
+
+# rows = {}
+# for scene in data:
+#     scene_id = scene['scene_id']
+#     if scene_id not in scene_ids:
+#         continue
+#     rows[scene_id] = []
+#     for s in scene['annotations']:
+#         query = s['query']
+#         antecedents = s['antecedents']
+#         if antecedents != "notMention":
+#             # if antecedents != ['n', 'o', 't', 'M', 'e', 'n', 't', 'i', 'o', 'n']:
+#             write_to_csv(scene, rows[scene_id], query['sentenceIndex'], query['startToken'], query['endToken'],
+#                          query['mention_id'])
+#             if antecedents != "notPresent":
+#                 # if antecedents != ["n", "o", "t", "P", "r", "e", "s", "e", "n", "t"]:
+#                 for antecedent in antecedents:
+#                     if antecedent['startToken'] != 0:
+#                         write_to_csv(scene, rows[scene_id], antecedent['sentenceIndex'], antecedent['startToken'],
+#                                      antecedent['endToken'], antecedent['mention_id'])
 
 count = 0
 for item in rows:
@@ -142,7 +162,7 @@ for line in f_reader:
 
 # for align in aligns:
 #  ts, (start,end) = get_tgt_string(align.tgt_tok,align.align,[0,1])
-
+# print(rows)
 for scene_id, row in rows.items():
     if scene_id not in scene_ids:
         continue
@@ -152,7 +172,7 @@ for scene_id, row in rows.items():
             continue
         r_align = scene_sent_align[str(r[0]) + ", " + str(r[1])]
         src = copy.copy(r_align.src_tok)
-        # src[r[2]:r[3]] = [' '.join(src[r[2]:r[3]])]
+        src[r[2]:r[3]] = [' '.join(src[r[2]:r[3]])]
 
         ts, (start, end) = get_tgt_string(r_align.tgt_tok, r_align.align, [r[2], r[3] - 1])
         tgt_tok_seg = r_align.tgt_tok
@@ -182,7 +202,8 @@ for scene_id, row in rows.items():
             'tar_tokens': tgt_tok_char,
             # 'config_obj': "{\"src_enable_retokenize\": false, \"version\": {\"PATCH\": 0, \"MAJOR\": 1, \"MINOR\": 0}, \"tar_enable_retokenize\": false,\"src_head_inds\":["+ str(r[2]) +"], \"tar_spans\":[["+ str(start)+", "+ str(end) +"]]}"
             'config_obj': "{\"src_enable_retokenize\": false, \"version\": {\"PATCH\": 0, \"MAJOR\": 1, \"MINOR\": 0}, \"tar_enable_retokenize\": false,\"src_head_inds\":[" + str(
-                r[2]) + "],\"alignment\":" + str(alignment).replace("'", "").lower() + "}"
+                r[2]) + "],\"alignment\":" + str(alignment).replace("'", "").lower() + "}",
+            'mention_id': r[-1]
         })
 
 ## run only once, to get awesome-align input
