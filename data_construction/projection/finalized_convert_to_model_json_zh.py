@@ -203,7 +203,7 @@ for scene_id, row in rows.items():
     for ss in range(len(scene_sents[scene_id])):
       if scene_id+", "+ str(ss) in scene_sent_align:
         # chinese
-        proj_sents.append(list("".join(scene_sent_align[scene_id+", "+ str(ss)].tgt_tok))) # Character-Level
+        proj_sents.append(list("".join(scene_sent_align[scene_id+", "+ str(ss)].tgt_tok)))
         # Farsi
         #proj_sents.append(scene_sent_align[scene_id+", "+ str(ss)].tgt_tok)
       else:
