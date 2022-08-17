@@ -20,10 +20,12 @@ data = json.load(f)
 
 awesomes = []
 
-def get_tgt_string(segments_tgt_i,alignments_i,indexes):
+def get_tgt_string(segments_tgt_i,aligns_i,indexes):
       # for each token in the span string, find the index of it in the segment
       found = list(range(indexes[0]+1,indexes[1]+2))
       tgt_span_list = [] # list of all tgt words for a span string
+      alignments_i = aligns_i.align
+      probs_i = aligns_i.prob
       for fo in found:
         if fo in alignments_i:
           for item in alignments_i[fo]:
@@ -32,23 +34,19 @@ def get_tgt_string(segments_tgt_i,alignments_i,indexes):
       tgt_span = []
       start = 0
       end = 0
+      prob = 1.0
       if tgt_span_list:
         # read all words in between
-        leng = 0
         for ts in range(tgt_span_list[0], tgt_span_list[-1]+1):
           tgt_span.append(segments_tgt_i[ts-1])
-          #leng += len(segments_tgt_i[ts-1]) + 1
-          leng += ts-1
-        leng -= 1
-        for l in range(tgt_span_list[0]):
-          if l>0:
-            #start += len(segments_tgt_i[l-1]) + 1
-            start += l-1
-        #end = start + leng
-        end = leng
         start = tgt_span_list[0] - 1
         end = tgt_span_list[-1]
-      return tgt_span, (start,end)
+        for i in range(indexes[0]+1, indexes[1]+2):
+          if i in alignments_i:
+            for a in alignments_i[i]:
+              if str(i) +"_"+ str(a) in probs_i:
+                prob *= float(probs_i[str(i) +"_"+ str(a)])
+      return tgt_span, (start,end), prob
 
 
 def write_to_json(scene, rows, q_sent_id, q_sta_tok, q_end_tok, a_sent_id, a_sta_tok, a_end_tok, query_mention_id, antecedent_mention_id):
@@ -113,8 +111,9 @@ for row_k, row in rows.items():
 # add target side alignments from word alignment results
 #aligns = align_util.load_aligns('/srv/local1/mahsay/awesome-align/coref/pilot_s08e02c05t.en-zh', '/srv/local1/mahsay/awesome-align/coref/pilot_s08e02c05t.en-zh.xlml16.ft.sup-align.out')
 #aligns = align_util.load_aligns('/srv/local1/mahsay/awesome-align/coref/dev-test-batch1.en-zh', '/srv/local1/mahsay/awesome-align/coref/dev-test-batch1.ft.sup-align.out')
-aligns = align_util.load_aligns('coref/all_coref_data_en.en-zh', 'coref/all_coref_data_en.ft.sup-align.out')
+aligns = align_util.load_aligns('/srv/local1/mahsay/awesome-align/coref/all_coref_data_en.en-zh', '/srv/local1/mahsay/awesome-align/coref/all_coref_data_en.ft.sup-align.out', '/srv/local1/mahsay/awesome-align/coref/all_coref_data_en.ft.sup-prob.out')
 #aligns = align_util.load_aligns('/srv/local1/mahsay/awesome-align/coref/all_coref_data_en.en-fa', '/srv/local1/mahsay/awesome-align/coref/all_coref_data_en.en-fa.ft.sup-align.out')
+
 scene_sent_align = {}
 f = open("to_awesome_zh_all.csv", "r", encoding="utf-8")
 f_reader = csv.DictReader(f, quoting=csv.QUOTE_ALL)
@@ -132,8 +131,6 @@ for line in f_reader:
 dict = {}  
 proj = []
 for scene_id, row in rows.items():
-  print("scene_id", scene_id)
-  
   dict = {"sentences": [], "annotations": [], "scene_id": ''}
   for r in row:
 #    print("\nr", r)
@@ -142,7 +139,7 @@ for scene_id, row in rows.items():
     #print("r_align", r_align)
     src = copy.copy(r_align.src_tok)
     src[r[2]:r[3]] = [' '.join(src[r[2]:r[3]])]
-    ts, (start,end) = get_tgt_string(r_align.tgt_tok,r_align.align,[r[2],r[3]-1])
+    ts, (start,end), prob = get_tgt_string(r_align.tgt_tok,r_align,[r[2],r[3]-1])
     tgt_tok_seg = r_align.tgt_tok
     tgt_tok_char = list("".join(tgt_tok_seg))
     seg_len = []
@@ -164,13 +161,13 @@ for scene_id, row in rows.items():
     character_name = ''
     if r[5] < -1: # antecedent is the character, must be taken from original english
       character_name = scene_sents[scene_id][r[4]][0:r[6]-r[5]]
-      annot = {"query": {"sentenceIndex": r[1], "startToken": start_char, "endToken": end_char, "mention_id": r[-2]}, "antecedents": character_name}
+      annot = {"query": {"sentenceIndex": r[1], "startToken": start_char, "endToken": end_char, "align_prob": prob, "mention_id": r[-2]}, "antecedents": character_name}
       #annot = {"query": {"sentenceIndex": r[1], "startToken": start, "endToken": end}, "antecedents": character_name}
     else:
       if r[4] != -1: # antecedent is not notPresent
         if str(r[0])+", "+ str(r[4]) in scene_sent_align:
           a_r_align = scene_sent_align[str(r[0])+", "+ str(r[4])]
-          ts, (a_start,a_end) = get_tgt_string(a_r_align.tgt_tok,a_r_align.align,[r[5],r[6]-1])
+          ts, (a_start,a_end), a_prob = get_tgt_string(a_r_align.tgt_tok,a_r_align,[r[5],r[6]-1])
           tgt_tok_seg = a_r_align.tgt_tok
           tgt_tok_char = list("".join(tgt_tok_seg))
           seg_len = []
@@ -188,13 +185,13 @@ for scene_id, row in rows.items():
           #a_end_char = a_end
           
           if a_start_char == 0 and a_end_char == 0:
-            annot = {"query": {"sentenceIndex": r[1], "startToken": start_char, "endToken": end_char, "mention_id": r[-2]}, "antecedents": ["null_projection"]}
+            annot = {"query": {"sentenceIndex": r[1], "startToken": start_char, "endToken": end_char, "align_prob": prob, "mention_id": r[-2]}, "antecedents": ["null_projection"]}
           else:
-            annot = {"query": {"sentenceIndex": r[1], "startToken": start_char, "endToken": end_char, "mention_id": r[-2]}, "antecedents": [{"sentenceIndex": r[4], "startToken": a_start_char, "endToken": a_end_char, "mention_id": r[-1]}]}
+            annot = {"query": {"sentenceIndex": r[1], "startToken": start_char, "endToken": end_char, "align_prob": prob, "mention_id": r[-2]}, "antecedents": [{"sentenceIndex": r[4], "startToken": a_start_char, "endToken": a_end_char, "align_prob": a_prob, "mention_id": r[-1]}]}
         else: # the foreign subtitle is empty in the original data
-          annot = {"query": {"sentenceIndex": r[1], "startToken": start_char, "endToken": end_char, "mention_id": r[-2]}, "antecedents": ["empty_subtitle"]}
+          annot = {"query": {"sentenceIndex": r[1], "startToken": start_char, "endToken": end_char, "align_prob": prob, "mention_id": r[-2]}, "antecedents": ["empty_subtitle"]}
       else:
-        annot = {"query": {"sentenceIndex": r[1], "startToken": start_char, "endToken": end_char, "mention_id": r[-2]}, "antecedents": ["n", "o", "t", "P", "r", "e", "s", "e", "n", "t"]}
+        annot = {"query": {"sentenceIndex": r[1], "startToken": start_char, "endToken": end_char, "align_prob": prob, "mention_id": r[-2]}, "antecedents": ["n", "o", "t", "P", "r", "e", "s", "e", "n", "t"]}
     
     if not (start_char == 0 and end_char == 0): # query projection is not empty
       dict["annotations"].append(annot)
