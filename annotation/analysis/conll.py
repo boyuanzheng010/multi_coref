@@ -178,7 +178,7 @@ def ceaf_e(
     r"""
     Compute the CEAFₑ `$(R, P, F₁)$` scores for a `#response` clustering given a `#key`
     clustering, that is the CEAF score for the `$Φ₄$` score function (aka the Sørensen–Dice
-    coefficient).
+    institute_namefficient).
     ```math
     Φ₄: (k, r) ⟼ \frac{2×\#k∩r}{\#k+\#r}
     ```

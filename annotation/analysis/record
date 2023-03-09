@@ -10,22 +10,22 @@
 ['Bernadette', ':', ' ', 'Happy', 'Thanks', '…', 'Yikes', '.']
 
 [3, 13, 14] ['it']
-ksanders [[3, 6, 8]] [['the', 'journal']]
+user_id_3 [[3, 6, 8]] [['the', 'journal']]
 bzheng [[3, 6, 8]] [['the', 'journal']]
-paxia notPresent
-chenyu notPresent
+user_id_2 notPresent
+user_id_4 notPresent
 
 [5, 8, 9] ['what']
-ksanders notMention
+user_id_3 notMention
 bzheng notMention
-paxia notPresent
-chenyu [[3, 27, 28], [3, 28, 29], [3, 26, 27]] [['shame'], ['photo'], ['a']]
+user_id_2 notPresent
+user_id_4 [[3, 27, 28], [3, 28, 29], [3, 26, 27]] [['shame'], ['photo'], ['a']]
 
 [5, 12, 15] ['A', 'little', 'bit']
-ksanders notMention
+user_id_3 notMention
 bzheng notMention
-paxia notPresent
-chenyu notPresent
+user_id_2 notPresent
+user_id_4 notPresent
 
 ====================================================================================================
 :|Oh|,|yeah|,|no|,|this|thing
