@@ -2,7 +2,6 @@
 
 /annotation: The code and source data to generate files to annotate and post-processing scripts
 
-/GIFs: the demo to use the coref annotation interface
 /coref_annotation_interface: the mTurk-style interface used for dialogue coreference annotation
 
 /data: Final data (both in conll format and jsonlines formta) and the meta data in annotation
