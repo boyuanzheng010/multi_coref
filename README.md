@@ -1,6 +1,6 @@
 # multi_coref
 
-/annotation: The code and source data to generate files to annotate and post-processing scripts; Also, the annotation interface
+/annotation: The code and source data to generate files to annotate and post-processing scripts
 
 /coref_annotation_interface: the mTurk-style interface used for dialogue coreference annotation
 
